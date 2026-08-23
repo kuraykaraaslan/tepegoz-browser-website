@@ -2,15 +2,19 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LOCALES, LOCALE_LABELS, isLocale, type Locale } from '@/libs/i18n/locales';
+import { LOCALES, LOCALE_LABELS, isLocale, localePath, type Locale } from '@/libs/i18n/locales';
 import { cn } from '@/libs/utils/cn';
 
 /**
  * Static-export language switcher.
  *
  * There is no middleware to negotiate a locale, so switching is just a link to
- * the same path under a different prefix — which also means the switcher is a
+ * the same route under a different locale — which also means the switcher is a
  * real anchor and works with JavaScript disabled.
+ *
+ * The prefix rule (default locale unprefixed, others prefixed) is not repeated
+ * here: strip whatever locale the current path carries to recover the bare
+ * route, then let `localePath` decide what the target URL looks like.
  *
  * It renders nothing while only one locale is configured, rather than showing a
  * dead control. Adding `'tr'` to LOCALES brings it back automatically.
@@ -22,7 +26,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
 
   const segments = pathname.split('/').filter(Boolean);
   const rest = segments.length > 0 && isLocale(segments[0]!) ? segments.slice(1) : segments;
-  const suffix = rest.length > 0 ? `/${rest.join('/')}` : '';
+  const route = rest.length > 0 ? `/${rest.join('/')}` : '/';
 
   return (
     <div
@@ -35,7 +39,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
         return (
           <Link
             key={code}
-            href={`/${code}${suffix}`}
+            href={localePath(route, code)}
             prefetch={false}
             hrefLang={code}
             aria-current={active ? 'true' : undefined}

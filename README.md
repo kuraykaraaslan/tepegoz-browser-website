@@ -5,7 +5,7 @@ static Next.js export, deployed on Vercel, built from KUI React components.
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000  → redirects to /en/
+npm run dev      # http://localhost:3000
 npm run build    # writes out/
 npm run check    # kui imports + content rules + types + lint
 ```
@@ -48,7 +48,7 @@ app/
 ├── layout.tsx                 pass-through root layout (site-wide metadata)
 ├── globals.css                Tailwind + Tepegöz tokens over KUI's token names
 ├── not-found.tsx  robots.ts  sitemap.ts
-└── (frontend)/[lang]/         every page, one folder per route
+└── (frontend)/                every page, one folder per route (default locale, unprefixed)
 components/{brand,layout,marketing}/
 libs/{config,i18n,seo,utils}/
 modules/marketing/content/     page copy, one file per page per locale
@@ -64,19 +64,32 @@ lists, tables, callouts, code, capability splits, CTAs, asset placeholders — a
 
 - **All twelve pages share one design language** without twelve hand-built layouts.
 - **Translating is copying a file.** Content is authored with bare routes (`/download`); the registry
-  rewrites them to `/en/download` at read time, so `modules/marketing/content/tr/` needs no locale prefixes.
+  rewrites them per locale at read time, so `modules/marketing/content/tr/` needs no locale prefixes.
 
 Inline copy supports `**bold**`, `_italic_`, `` `code` ``, `[text](/href)`, and `{{PLACEHOLDER}}`,
 parsed to React nodes — never `dangerouslySetInnerHTML`.
+
+### URL scheme
+
+**The default locale is unprefixed.** English is served from `/`, `/features`, `/security`. A second
+locale gets its own prefix — `/tr`, `/tr/features`. That rule lives in exactly one function,
+`localePath()` in `libs/i18n/locales.ts`; navigation, the sitemap, `hreflang`, the language switcher
+and the OG images all derive from it rather than repeating the branch.
+
+`/en` and `/en/*` permanently redirect to the unprefixed equivalents (`vercel.json`), so links shared
+before this change keep resolving.
 
 ### Adding Turkish
 
 1. Add `'tr'` to `LOCALES` in `libs/i18n/locales.ts`.
 2. Copy `modules/marketing/content/en/` to `../tr/` and translate the strings.
 3. Register it in `modules/marketing/content/index.ts`.
+4. Add `app/(localized)/[lang]/` — a **sibling route group** mirroring `app/(frontend)/`, whose pages
+   pass the `lang` param to `getPage` where the root pages pass `DEFAULT_LOCALE`.
 
-Routing, the language switcher, `hreflang`, the sitemap, and OG images all read from `LOCALES` and
-extend themselves.
+Step 4 is a sibling rather than a nested tree because each route group may own a root layout; nesting
+them would produce two `<html>` elements. Steps 1–3 alone already make the switcher, sitemap and
+`hreflang` aware of the new locale.
 
 ---
 
@@ -106,11 +119,10 @@ shares an entrypoint with components the site does render.
 
 `output: 'export'` — no server, no middleware, no image optimizer.
 
-- **Layout split.** `app/layout.tsx` is a pass-through; `<html lang>` lives in
-  `app/(frontend)/[lang]/layout.tsx` because a root layout cannot see the language segment, and the
-  `lang` attribute has to be correct.
-- **`/` redirect.** Vercel handles it (`vercel.json`); `public/index.html` is the fallback for any host
-  serving `out/` as plain files.
+- **Layout split.** `app/layout.tsx` is a pass-through holding site-wide metadata; `<html lang>` lives
+  in `app/(frontend)/layout.tsx`. Keeping them separate is what lets a second locale add its own root
+  layout in a sibling route group.
+- **`/` is a real page**, not a redirect — there is no locale segment to negotiate.
 - **`prefetch={false}` everywhere.** Next 16.2.4's exporter writes the segment-cache payload for a
   dynamic segment at `<route>/__next.$d$locale.txt` while the prefetcher requests
   `<route>/__next.$d$locale.<segment>.txt`. Every prefetch 404s. On-demand navigation uses a correct

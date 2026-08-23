@@ -2,7 +2,7 @@
 import { ImageResponse } from 'next/og';
 import type { RouteKey } from '@/libs/config/site';
 import { SITE } from '@/libs/config/site';
-import { isLocale, LOCALES } from '@/libs/i18n/locales';
+import { DEFAULT_LOCALE, isLocale } from '@/libs/i18n/locales';
 import { getPage } from '@/modules/marketing/content';
 
 /**
@@ -20,14 +20,6 @@ import { getPage } from '@/modules/marketing/content';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 export const alt = `${SITE.name} — ${SITE.tagline}`;
-
-/**
- * Required so the image is emitted for every locale under `output: 'export'`.
- * The key must match the `[lang]` segment.
- */
-export function ogStaticParams() {
-  return LOCALES.map((lang) => ({ lang }));
-}
 
 const NAVY = '#0C2135';
 const NAVY_DEEP = '#07172E';
@@ -50,7 +42,7 @@ const MARK = `data:image/svg+xml;utf8,${encodeURIComponent(
 )}`;
 
 export async function renderOgImage(locale: string, key: RouteKey) {
-  const resolved = isLocale(locale) ? locale : LOCALES[0];
+  const resolved = isLocale(locale) ? locale : DEFAULT_LOCALE;
   const page = getPage(resolved, key);
 
   return new ImageResponse(

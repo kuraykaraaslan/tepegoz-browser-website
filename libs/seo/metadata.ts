@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { ROUTES, SITE, type RouteKey } from '@/libs/config/site';
-import { LOCALES, localePath, type Locale } from '@/libs/i18n/locales';
+import { DEFAULT_LOCALE, LOCALES, localePath, type Locale } from '@/libs/i18n/locales';
 import { getPage } from '@/modules/marketing/content';
 
 /**
@@ -26,7 +26,7 @@ export function buildMetadata(locale: Locale, key: RouteKey): Metadata {
     description: page.description,
     alternates: {
       canonical,
-      languages: { ...languages, 'x-default': localePath(path, LOCALES[0]) },
+      languages: { ...languages, 'x-default': localePath(path, DEFAULT_LOCALE) },
     },
     openGraph: {
       type: 'website',
