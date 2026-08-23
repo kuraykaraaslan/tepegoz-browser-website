@@ -12,14 +12,14 @@ export const privacy: PageContent = {
   route: '/privacy',
   title: 'Privacy — Tepegöz',
   description:
-    'No telemetry, no account, no backend. Where your data lives, what leaves your machine, and what a local-first browser cannot promise.',
+    'No telemetry, no account today, no backend. Where your data lives, what leaves your machine, and what a local-first browser cannot promise.',
   status: 'ready',
 
   hero: {
     eyebrow: 'Privacy',
     headline: 'We do not have your data. Not as a policy — as an architecture.',
     subhead:
-      'There is no Tepegöz account, no Tepegöz server, and no telemetry. The browser works because it runs on your machine, not because something of ours is running somewhere else.',
+      'There is no Tepegöz account, no Tepegöz server, and no telemetry today. The browser works because it runs on your machine, not because something of ours is running somewhere else. An optional cloud tier is planned — never required, and covered below.',
   },
 
   sections: [

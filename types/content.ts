@@ -100,6 +100,23 @@ export type CapabilityBlock = {
   }[];
 };
 
+/**
+ * A real screenshot of the shipped application.
+ *
+ * `caption` is what the reader is looking at; `alt` is what the image conveys
+ * to someone who cannot see it, and the two are deliberately separate fields so
+ * neither degrades into the other. Dimensions are required: the intrinsic size
+ * reserves the space, and "no layout shift on the hero" is a site-wide rule.
+ */
+export type FigureBlock = {
+  kind: 'figure';
+  src: string;
+  alt: string;
+  caption?: RichText;
+  width: number;
+  height: number;
+};
+
 export type CodeBlock = {
   kind: 'code';
   language?: string;
@@ -133,6 +150,7 @@ export type Block =
   | CalloutBlock
   | CapabilityBlock
   | CodeBlock
+  | FigureBlock
   | CtasBlock
   | AssetPlaceholderBlock;
 
@@ -154,6 +172,19 @@ export type Hero = {
   ctas?: Cta[];
   /** The pre-release condition, shown directly under the buttons at body weight. */
   statusNote?: { body: RichText; href?: string; linkLabel?: string };
+  /**
+   * A product shot under the hero copy.
+   *
+   * This is a picture of the application, not evidence that a task completed.
+   * It does not discharge `home.md`'s standing requirement for a real recording
+   * of the agent working — that asset is still owed, and the page keeps saying
+   * so in its own demo section.
+   *
+   * Rendered eagerly and at high fetch priority: it is above the fold on most
+   * screens, and lazy-loading the largest element in the viewport is how a
+   * hero ends up shifting after paint.
+   */
+  media?: { src: string; alt: string; caption?: RichText; width: number; height: number };
 };
 
 export type PageContent = {

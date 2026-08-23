@@ -215,6 +215,22 @@ body {
   border-radius: 2px;
 }
 
+/* KUI's AppNav swaps its drawer for the full nav at 768px. With six nav items
+   plus the theme toggle and the Download CTA, the header stopped fitting and
+   overflowed the viewport between 768px and 1024px. Hold the drawer until the
+   full nav actually fits, overriding the vendored component from the outside
+   rather than forking it. The selectors follow AppNav's own structure: the
+   drawer is the header's first child, the nav carries an aria-label. */
+@media (min-width: 48rem) and (max-width: 63.9375rem) {
+  .site-header > div:first-child {
+    display: block;
+  }
+
+  .site-header nav[aria-label='Main navigation'] {
+    display: none;
+  }
+}
+
 ::selection {
   background: var(--primary-subtle);
   color: var(--text-primary);

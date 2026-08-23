@@ -50,6 +50,14 @@ export const features: PageContent = {
       heading: 'Everything you expect a browser to already do.',
       blocks: [
         {
+          kind: 'figure',
+          src: '/screenshots/browser-chrome.png',
+          alt: 'The Tepegöz window: tab strip, address bar, bookmarks bar, and the new-tab page with a search field.',
+          caption: 'Tabs, a deterministic address bar, and a bookmarks bar — each tab an isolated view.',
+          width: 1440,
+          height: 900,
+        },
+        {
           kind: 'capability',
           groups: [
             {
@@ -95,6 +103,14 @@ export const features: PageContent = {
       eyebrow: 'The agent',
       heading: 'The part that does the work.',
       blocks: [
+        {
+          kind: 'figure',
+          src: '/screenshots/command-palette.png',
+          alt: 'The command palette open over a page, with Chat, Do, Make and Tasks tabs and a command input.',
+          caption: '`Ctrl+K` — the four modes, over whatever page you are on.',
+          width: 1440,
+          height: 900,
+        },
         {
           kind: 'capability',
           groups: [
@@ -175,6 +191,14 @@ export const features: PageContent = {
       eyebrow: 'Security',
       heading: 'The limits the agent runs inside.',
       blocks: [
+        {
+          kind: 'figure',
+          src: '/screenshots/providers.png',
+          alt: 'Settings, Providers and API keys: a provider dropdown, a label field and an API key field, with a note that keys are encrypted on the device.',
+          caption: 'Your key, your machine: "encrypted on this device (OS keychain) and never leave it without your action."',
+          width: 1440,
+          height: 900,
+        },
         {
           kind: 'capability',
           groups: [
@@ -261,6 +285,14 @@ export const features: PageContent = {
       heading: 'Per-tab tunnels that fail closed.',
       blocks: [
         {
+          kind: 'figure',
+          src: '/screenshots/network-privacy.png',
+          alt: 'Settings, Network privacy: a connection form offering WireGuard, Tor or SOCKS5, a default route selector, and notices that Tepegöz does not ship the tunnel binaries.',
+          caption: 'WireGuard, Tor or a SOCKS5 endpoint you already run — and it says plainly that it ships neither binary.',
+          width: 1440,
+          height: 900,
+        },
+        {
           kind: 'capability',
           groups: [
             {
@@ -294,6 +326,14 @@ export const features: PageContent = {
       eyebrow: 'Extensions',
       heading: 'Nine first-party extensions ship with the browser.',
       blocks: [
+        {
+          kind: 'figure',
+          src: '/screenshots/extensions.png',
+          alt: 'The extensions page: nine first-party extension cards, each enabled, with names and descriptions.',
+          caption: 'All nine, first-party, enabled by default — and each one removable.',
+          width: 1440,
+          height: 900,
+        },
         {
           kind: 'capability',
           groups: [

@@ -11,13 +11,13 @@ export function Container({
 }: {
   children: React.ReactNode;
   className?: string;
-  width?: 'default' | 'prose';
+  width?: 'default' | 'prose' | 'wide';
 }) {
   return (
     <div
       className={cn(
         'mx-auto w-full px-5 sm:px-6 lg:px-8',
-        width === 'prose' ? 'max-w-3xl' : 'max-w-5xl',
+        width === 'prose' ? 'max-w-3xl' : width === 'wide' ? 'max-w-6xl' : 'max-w-5xl',
         className
       )}
     >

@@ -302,6 +302,32 @@ export function BlockRenderer({ block, idPrefix }: { block: Block; idPrefix: str
         </div>
       );
 
+    case 'figure':
+      return (
+        <figure className="space-y-3">
+          {/* Screenshots of a light-themed desktop app would glare on the dark
+              site, so they sit on their own light plate in both themes rather
+              than being inverted — a recoloured screenshot is not a screenshot. */}
+          <div className="overflow-hidden rounded-xl border border-border bg-[#F4F7FA] p-2 sm:p-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={block.src}
+              alt={block.alt}
+              width={block.width}
+              height={block.height}
+              loading="lazy"
+              decoding="async"
+              className="block h-auto w-full rounded-lg border border-black/10"
+            />
+          </div>
+          {block.caption && (
+            <figcaption className="text-sm leading-relaxed text-text-secondary">
+              {renderRichText(block.caption, `${idPrefix}-fig`)}
+            </figcaption>
+          )}
+        </figure>
+      );
+
     case 'code':
       return (
         <div className="overflow-hidden rounded-xl border border-border bg-surface-sunken">

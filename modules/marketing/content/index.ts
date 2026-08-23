@@ -86,6 +86,10 @@ function block(value: Block, locale: Locale): Block {
       };
     case 'ctas':
       return { ...value, items: value.items.map((c) => cta(c, locale)) };
+    case 'figure':
+      return value.caption
+        ? { ...value, caption: richText(value.caption, locale) }
+        : value;
     case 'code':
     case 'assetPlaceholder':
       return value;
@@ -107,6 +111,9 @@ function withLocale(page: PageContent, locale: Locale): PageContent {
       ...page.hero,
       subhead: richText(page.hero.subhead, locale),
       ctas: page.hero.ctas?.map((c) => cta(c, locale)),
+      media: page.hero.media?.caption
+        ? { ...page.hero.media, caption: richText(page.hero.media.caption, locale) }
+        : page.hero.media,
       statusNote: page.hero.statusNote
         ? {
             ...page.hero.statusNote,

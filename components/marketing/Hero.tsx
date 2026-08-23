@@ -4,6 +4,7 @@ import { faArrowRight, faCircleHalfStroke } from '@fortawesome/free-solid-svg-ic
 import { CtaRow } from './CtaRow';
 import { Container } from './Section';
 import { renderRichText } from './RichText';
+import { cn } from '@/libs/utils/cn';
 import type { Hero as HeroData } from '@/types/content';
 
 /**
@@ -23,8 +24,16 @@ export function Hero({ hero }: { hero: HeroData }) {
         aria-hidden="true"
       />
 
-      <Container className="py-16 sm:py-20 lg:py-24">
-        <div className="max-w-3xl">
+      <Container
+        width={hero.media ? 'wide' : 'default'}
+        className="py-16 sm:py-20 lg:py-24"
+      >
+        <div
+          className={cn(
+            hero.media && 'lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-14'
+          )}
+        >
+        <div className="max-w-2xl">
           {hero.eyebrow && (
             <p className="mb-4 font-mono text-[0.6875rem] uppercase tracking-[0.16em] text-primary">
               {hero.eyebrow}
@@ -63,6 +72,32 @@ export function Hero({ hero }: { hero: HeroData }) {
               </p>
             </div>
           )}
+        </div>
+
+        {hero.media && (
+          <figure className="mt-12 lg:mt-0">
+            {/* A light-themed desktop app on a dark site: the shot keeps its own
+                light plate in both themes rather than being inverted. */}
+            <div className="overflow-hidden rounded-2xl border border-border bg-[#F4F7FA] p-2 shadow-sm sm:p-3">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={hero.media.src}
+                alt={hero.media.alt}
+                width={hero.media.width}
+                height={hero.media.height}
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="block h-auto w-full rounded-xl border border-black/10"
+              />
+            </div>
+            {hero.media.caption && (
+              <figcaption className="mt-3 text-sm leading-relaxed text-text-secondary">
+                {renderRichText(hero.media.caption, 'hero-media')}
+              </figcaption>
+            )}
+          </figure>
+        )}
         </div>
       </Container>
     </section>

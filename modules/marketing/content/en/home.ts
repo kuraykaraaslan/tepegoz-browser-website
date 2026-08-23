@@ -17,6 +17,17 @@ export const home: PageContent = {
       { label: 'Get Tepegöz', href: '/download', variant: 'primary' },
       { label: 'See how it works', href: '/how-it-works', variant: 'outline' },
     ],
+    // The command palette rather than a finished task: the hero can show what
+    // the product IS without implying a result it has not demonstrated. The
+    // recording of the agent actually working is still owed — see the demo
+    // section below, which keeps saying so.
+    media: {
+      src: '/screenshots/extensions.png',
+      alt: 'The Tepegöz window showing its extensions page: nine first-party extension cards, each with a name, a description and an enable toggle.',
+      caption: 'A real capture of the running application — the nine extensions it ships with.',
+      width: 1440,
+      height: 900,
+    },
     statusNote: {
       body: '**Pre-release.** Builds are signed and downloadable, but this is early software: there has been no independent security audit, and the automation has not been independently benchmarked.',
       href: '/roadmap',
