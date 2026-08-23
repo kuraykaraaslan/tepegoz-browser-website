@@ -13,7 +13,7 @@ import {
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { renderRichText } from './RichText';
 import { CtaRow } from './CtaRow';
-import type { Block, CalloutBlock, CapabilityBlock } from '@/types/content';
+import type { Block, CalloutBlock, CapabilityBlock, Item } from '@/types/content';
 import { cn } from '@/libs/utils/cn';
 
 const CALLOUT_STYLE: Record<
@@ -43,6 +43,33 @@ const CALLOUT_STYLE: Record<
 };
 
 type CapabilityState = CapabilityBlock['groups'][number]['state'];
+
+/** Normalises the bare-string shorthand into the full item shape. */
+function readItem(item: Item): { text: string; star: boolean } {
+  return typeof item === 'string' ? { text: item, star: false } : { text: item.text, star: true };
+}
+
+/**
+ * The differentiator marker.
+ *
+ * `aria-hidden` on the glyph with an adjacent screen-reader label, because a
+ * lone `★` announces as "black star" — meaningless without the legend a sighted
+ * reader gets from the top of the page.
+ */
+function StarMark() {
+  return (
+    <>
+      <span className="sr-only">Differentiator: </span>
+      <span
+        className="mr-1.5 inline-block align-[0.05em] text-[0.9em] font-semibold text-star"
+        aria-hidden="true"
+        title="Differentiator"
+      >
+        ★
+      </span>
+    </>
+  );
+}
 
 /**
  * Available is solid and confident; Planned is deliberately quieter — dashed,
@@ -161,7 +188,8 @@ export function BlockRenderer({ block, idPrefix }: { block: Block; idPrefix: str
                 </span>
               )}
               <span className="text-[1.0625rem] leading-[1.7] text-text-secondary">
-                {renderRichText(item, `${idPrefix}-l${i}`)}
+                {readItem(item).star && <StarMark />}
+                {renderRichText(readItem(item).text, `${idPrefix}-l${i}`)}
               </span>
             </li>
           ))}
@@ -227,7 +255,14 @@ export function BlockRenderer({ block, idPrefix }: { block: Block; idPrefix: str
 
     case 'capability':
       return (
-        <div className="grid items-start gap-5 lg:grid-cols-2">
+        <div
+          className={cn(
+            'grid items-start gap-5',
+            // A lone group (e.g. a list with nothing planned against it) would
+            // otherwise sit in a half-width column with dead space beside it.
+            block.groups.length > 1 && 'lg:grid-cols-2'
+          )}
+        >
           {block.groups.map((group, g) => {
             const style = CAPABILITY_STATE[group.state];
             return (
@@ -255,7 +290,8 @@ export function BlockRenderer({ block, idPrefix }: { block: Block; idPrefix: str
                         )}
                       </span>
                       <span className={cn('text-[0.9375rem] leading-relaxed', style.text)}>
-                        {renderRichText(item, `${idPrefix}-cap${g}-${i}`)}
+                        {readItem(item).star && <StarMark />}
+                        {renderRichText(readItem(item).text, `${idPrefix}-cap${g}-${i}`)}
                       </span>
                     </li>
                   ))}

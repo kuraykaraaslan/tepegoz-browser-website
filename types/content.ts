@@ -34,6 +34,16 @@ export type Cta = {
   external?: boolean;
 };
 
+/**
+ * A list entry that can be flagged as a differentiator.
+ *
+ * The star is structural rather than a `★` typed into the prose: the renderer
+ * needs to style it, screen readers need it announced as meaning rather than
+ * decoration, and a future filter needs to query it. A bare string is still
+ * accepted so the common, unstarred case stays terse.
+ */
+export type Item = RichText | { text: RichText; star: true };
+
 export type ProseBlock = {
   kind: 'prose';
   /** One string per paragraph. */
@@ -55,7 +65,7 @@ export type ListBlock = {
   kind: 'list';
   /** `check` = things that work, `deny` = things that are refused, `plain` = neutral. */
   variant?: 'check' | 'deny' | 'plain';
-  items: RichText[];
+  items: Item[];
 };
 
 export type TableBlock = {
@@ -86,7 +96,7 @@ export type CapabilityBlock = {
     state: 'available' | 'planned' | 'in-progress';
     /** Optional override; defaults to a label derived from `state`. */
     label?: string;
-    items: RichText[];
+    items: Item[];
   }[];
 };
 

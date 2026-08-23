@@ -1,6 +1,6 @@
 import type { RouteKey } from '@/libs/config/site';
 import { localePath, type Locale } from '@/libs/i18n/locales';
-import type { Block, Cta, NavLabels, PageContent, Section } from '@/types/content';
+import type { Block, Cta, Item, NavLabels, PageContent, Section } from '@/types/content';
 import { EN_PAGES, EN_NAV_LABELS } from './en';
 
 /**
@@ -45,6 +45,13 @@ function richText(value: string, locale: Locale): string {
   );
 }
 
+/** Rewrites routes inside a list item, preserving its star flag. */
+function item(value: Item, locale: Locale): Item {
+  return typeof value === 'string'
+    ? richText(value, locale)
+    : { ...value, text: richText(value.text, locale) };
+}
+
 function cta(value: Cta, locale: Locale): Cta {
   return value.external ? value : { ...value, href: href(value.href, locale) };
 }
@@ -64,7 +71,7 @@ function block(value: Block, locale: Locale): Block {
         items: value.items.map((i) => ({ ...i, body: richText(i.body, locale) })),
       };
     case 'list':
-      return { ...value, items: value.items.map((i) => richText(i, locale)) };
+      return { ...value, items: value.items.map((i) => item(i, locale)) };
     case 'table':
       return { ...value, rows: value.rows.map((r) => r.map((c) => richText(c, locale))) };
     case 'callout':
@@ -74,7 +81,7 @@ function block(value: Block, locale: Locale): Block {
         ...value,
         groups: value.groups.map((g) => ({
           ...g,
-          items: g.items.map((i) => richText(i, locale)),
+          items: g.items.map((i) => item(i, locale)),
         })),
       };
     case 'ctas':

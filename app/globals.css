@@ -73,6 +73,10 @@
   --info:            #0C5A8A;
   --info-subtle:     #EAF4FB;
   --info-fg:         #06344F;
+
+  /* Reserved for one job: marking a differentiator in a feature list. Amber
+     rather than the brand cyan so a star never reads as "this is the accent". */
+  --star:            #9A6B00;
 }
 
 .dark {
@@ -123,6 +127,8 @@
   --info:            #7BC4EE;
   --info-subtle:     #06283D;
   --info-fg:         #CDE8F9;
+
+  --star:            #F0B429;
 }
 
 @theme inline {
@@ -170,6 +176,8 @@
   --color-error:           var(--error);
   --color-error-subtle:    var(--error-subtle);
   --color-error-fg:        var(--error-fg);
+
+  --color-star:            var(--star);
 
   --color-info:            var(--info);
   --color-info-subtle:     var(--info-subtle);
