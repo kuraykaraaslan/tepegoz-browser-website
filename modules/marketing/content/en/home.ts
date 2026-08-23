@@ -18,7 +18,7 @@ export const home: PageContent = {
       { label: 'See how it works', href: '/how-it-works', variant: 'outline' },
     ],
     statusNote: {
-      body: '**Pre-release.** There is no installer yet — Tepegöz is built from source today. Nothing here is stable, nothing is signed, and the automation has not been independently benchmarked.',
+      body: '**Pre-release.** Builds are signed and downloadable, but this is early software: there has been no independent security audit, and the automation has not been independently benchmarked.',
       href: '/roadmap',
       linkLabel: 'What that means',
     },
@@ -56,7 +56,7 @@ export const home: PageContent = {
             },
             {
               title: 'Security by design',
-              body: 'Web pages and the renderer are treated as untrusted. A rule-based **policy kernel classifies every tool call before the model runs**, an egress firewall blocks data from leaving to places it should not, and banking, crypto, health and password-manager sites are locked out of automation by default.',
+              body: 'Web pages and the renderer are treated as untrusted. A rule-based **policy kernel classifies every tool call before the model runs**, an egress firewall blocks data from leaving to places it should not, and banking, crypto, health and password-manager sites ship switched off, and only you can enable them.',
             },
             {
               title: 'Observable and reversible',
@@ -167,7 +167,7 @@ export const home: PageContent = {
         {
           kind: 'prose',
           body: [
-            'Every capability of the agent competence program is built and none of it is independently measured — the benchmark spend has not been paid, and until it is, "our agent is better" is a sentence this project will not write. Builds are unsigned. No security audit has been performed. Several capabilities ship deliberately switched off.',
+            'Every capability of the agent competence program is built and none of it is independently measured — the benchmark spend has not been paid, and until it is, "our agent is better" is a sentence this project will not write. No independent security audit has been performed. Several capabilities ship deliberately switched off.',
             'All of it is written down, per phase, with what is missing and why.',
           ],
         },
@@ -186,7 +186,7 @@ export const home: PageContent = {
         {
           kind: 'prose',
           body: [
-            '_Tepegöz_ is the one-eyed giant of Turkish mythology, the monster of the Book of Dede Korkut. The single eye is the point: **one agent, one focused gaze on the page**, acting deliberately instead of blindly.',
+            '_Tepegöz_ is the one-eyed giant of Turkic mythology, the monster of the Book of Dede Korkut. The single eye is the point: **one agent, one focused gaze on the page**, acting deliberately instead of blindly.',
           ],
         },
         { kind: 'ctas', items: [{ label: 'Read the story', href: '/story', variant: 'outline' }] },

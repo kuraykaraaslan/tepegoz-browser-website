@@ -25,7 +25,7 @@ export const story: PageContent = {
         {
           kind: 'prose',
           body: [
-            '_Tepegöz_ — literally "crown-of-the-head eye" — is the one-eyed giant of Turkish myth, best known as the monster of the **Book of Dede Korkut**, the foundational epic cycle of the Oghuz Turks. He is not a minor creature. He is the antagonist an entire people had to answer for, and the story of how he was finally faced is one of the oldest surviving narratives in Turkish.',
+            '_Tepegöz_ — literally "crown-of-the-head eye" — is the one-eyed giant of Turkic myth, best known as the monster of the **Book of Dede Korkut**, the foundational epic cycle of the Oghuz Turks. He is not a minor creature. He is the antagonist an entire people had to answer for, and the story of how he was finally faced is one of the oldest surviving narratives in Turkish.',
             'Naming a browser after a monster is a deliberate joke with a serious half.',
           ],
         },
@@ -70,25 +70,11 @@ export const story: PageContent = {
       blocks: [
         {
           kind: 'list',
-          variant: 'deny',
+          variant: 'check',
           items: [
-            '**It will not solve a CAPTCHA for you.** A browser that defeats human-verification is a browser that will eventually do it for someone who is not you.',
+            '**It will not unlock anything on your behalf.** Every capability that can cost you something — banking, crypto, health, password managers, spending from a wallet — ships switched off. The agent cannot enable one, cannot widen one, and cannot argue its way into one. Only you open those doors.',
             '**It will not claim a benchmark it has not run.** Every capability of the agent competence program is built and none of it is independently measured. That is written on the roadmap, in the README, and on this website — because the alternative is a number nobody can check, which is what most of this category currently offers.',
             "**It will not treat Turkish as a localization task.** Turkish is a first-class language here, with a dedicated keyboard pipeline and a regression matrix, in a category where rivals' own users file non-English input as a blocking defect.",
-          ],
-        },
-      ],
-    },
-
-    {
-      id: 'made',
-      eyebrow: 'Where it is made',
-      heading: 'Written in Turkey, in the open, by one person.',
-      blocks: [
-        {
-          kind: 'prose',
-          body: [
-            'A commercial product that happens to be free software. Windows is the primary target because that is what the people this was built for actually use.',
           ],
         },
       ],

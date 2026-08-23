@@ -63,7 +63,7 @@ export const legalTerms: PageContent = {
           variant: 'plain',
           items: [
             'Tepegöz is **free of charge**. There is no subscription, no account, and nothing on this site sells you the browser.',
-            'It is **pre-release software**. There is no stable version, no update channel, no security audit, and builds are unsigned.',
+            'It is **pre-release software**. Builds are signed, but there has been no independent security audit and the automation has not been independently benchmarked.',
             'The AGPL-3.0 disclaims warranties and limits liability. **The software is provided without warranty of any kind**, including merchantability and fitness for a particular purpose.',
             'There is **no support obligation**. Issues and security reports are read and acted on as capacity allows; nothing on this site is a service-level commitment.',
           ],
@@ -82,8 +82,9 @@ export const legalTerms: PageContent = {
           items: [
             '**You are responsible for what you instruct it to do**, including compliance with the terms of the websites you automate. Many services restrict automated access; that agreement is between you and them.',
             '**You bring your own AI provider key**, and your use of that provider is governed by their terms. Content the agent sends goes directly to that provider. We are not a party to it and cannot see it.',
-            '**Automation can cause irreversible outcomes.** The software puts confirmations in front of actions it classifies as financial, credential-related or destructive, and those safeguards are not a guarantee. Judgement remains yours.',
-            '**Do not use it for anything unlawful**, and do not use it to circumvent access controls or human-verification systems belonging to others.',
+            '**Automation can cause irreversible outcomes, including spending your money.** Sensitive categories and wallet mandates ship disabled and are enabled only by you; once enabled, the agent acts within them without asking again. Setting a ceiling, a payee list and an expiry you can live with is your responsibility, and those safeguards are not a guarantee. Judgement remains yours.',
+            '**Do not use it for anything unlawful**, and do not use it to reach systems or data you are not authorised to reach.',
+            '**Automated access, including automated completion of human-verification challenges, is your decision and your responsibility.** Many services restrict or prohibit it in their own terms. The software will do what you enable; whether you are permitted to is between you and the site.',
           ],
         },
       ],

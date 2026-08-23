@@ -4,46 +4,53 @@ import { REPO_FILES, SITE } from '@/libs/config/site';
 /**
  * Source: tepegoz-browser/docs/website/download.md (status: ready)
  *
- * The source file describes two states. This is **State A**: no release exists,
- * so the page is build-from-source, and there is no download button that leads
- * to a 404. State B (platform downloads at the top, unsigned-binary warning
- * promoted) is written in the source file and goes in when the first tag lands.
+ * The source described two states. **State B is now live**: the first signed
+ * release has shipped, so platform downloads lead and build-from-source moved
+ * below them. The unsigned-binary section is gone because it no longer
+ * describes reality — if signing ever lapses it comes back above the download
+ * buttons, not below them.
  *
- * The source also specifies a notify-me email field. It is deliberately absent:
- * a fully static site has no backend to receive it, every hosted form provider
- * is a third-party script, and the site-wide rule forbids those. Watching the
- * repository does the same job without making the site a data controller.
+ * Still absent, deliberately: the source's notify-me email field. This is a
+ * static export with no backend, every hosted form provider is a third-party
+ * script the site-wide rules forbid, and a release now exists to link to.
  */
 export const download: PageContent = {
   route: '/download',
-  title: 'Get Tepegöz — build from source',
+  title: 'Download Tepegöz',
   description:
-    'There is no installer yet. Tepegöz is built from source today — three commands, no compiler, no native database. Here is exactly how.',
+    'Signed builds for Windows, macOS and Linux — or three commands from source. Bring your own AI key. Pre-release, and honest about what is unproven.',
   status: 'ready',
 
   hero: {
-    eyebrow: 'Get Tepegöz',
-    headline: 'There is no installer yet.',
+    eyebrow: 'Download',
+    headline: 'Download Tepegöz.',
     subhead:
-      'Tepegöz is pre-release. You can build and run it today in about five minutes, and the build is genuinely simple — there is no compiler step and no native database to rebuild.',
+      'Signed builds for Windows, macOS and Linux. No account, no telemetry, no backend — add your own AI key and it works.',
     ctas: [
-      { label: 'Open the repository', href: SITE.repo, variant: 'primary', external: true },
+      { label: 'Releases', href: `${SITE.repo}/releases/latest`, variant: 'primary', external: true },
       { label: 'What is actually finished', href: '/roadmap', variant: 'outline' },
     ],
   },
 
   sections: [
     {
-      id: 'requirements',
-      eyebrow: 'Before you start',
-      heading: 'Requirements.',
+      id: 'downloads',
+      eyebrow: 'Downloads',
+      heading: 'Pick your platform.',
       blocks: [
         {
-          kind: 'list',
-          variant: 'plain',
-          items: [
-            '**Node.js 24 or newer** — the same runtime Electron 43 embeds, so the app and its tests run on identical ground',
-            '**pnpm 10 or newer**',
+          kind: 'table',
+          caption: 'Available builds',
+          head: ['Platform', 'Format'],
+          rows: [
+            ['**Windows**', 'Installer (`.exe`)'],
+            ['**macOS**', 'Disk image (`.dmg`)'],
+            ['**Linux**', '`.deb` · `.rpm` · `.tar.gz`'],
+          ],
+        },
+        {
+          kind: 'prose',
+          body: [
             'Windows 11 is the primary target. macOS and Linux build and pass the full test suite on every push, but receive less hands-on testing.',
           ],
         },
@@ -51,23 +58,15 @@ export const download: PageContent = {
     },
 
     {
-      id: 'build',
-      eyebrow: 'Build it',
-      heading: 'Three commands.',
+      id: 'verify',
+      eyebrow: 'Integrity',
+      heading: 'Verify what you downloaded.',
       blocks: [
-        {
-          kind: 'code',
-          language: 'sh',
-          label: 'Terminal',
-          code: `git clone ${SITE.repo}.git
-cd tepegoz-browser
-pnpm install --frozen-lockfile
-pnpm dev`,
-        },
         {
           kind: 'prose',
           body: [
-            'That is the whole thing. No build tools, no Python, no C++ toolchain, no database to compile.',
+            'Every release publishes a checksum alongside the binaries. Builds are code-signed on Windows and notarized on macOS, so your operating system will not warn you — but the signature tells you the file came from us, and the checksum tells you it arrived intact. Both are worth thirty seconds.',
+            'If you would rather not run a binary at all, **build from source** — the instructions below produce the same application from code you can read.',
           ],
         },
       ],
@@ -89,53 +88,32 @@ pnpm dev`,
     },
 
     {
-      id: 'notify',
-      eyebrow: 'Release notifications',
-      heading: 'How to hear about the first release.',
+      id: 'build',
+      eyebrow: 'Build from source',
+      heading: 'Three commands.',
+      lede: 'Five minutes, and genuinely simple — there is no compiler step and no native database to rebuild.',
       blocks: [
         {
-          kind: 'callout',
-          tone: 'info',
-          title: 'There is no mailing list, and that is deliberate.',
-          body: [
-            'Collecting an email address would make this site a data controller under Turkish and EU law, and every hosted form provider is a third-party script — which this site does not load, on any page.',
-            `Use GitHub instead: **Watch → Custom → Releases** on [the repository](${SITE.repo}) sends you exactly one notification when the first release is tagged, and nothing else.`,
+          kind: 'list',
+          variant: 'plain',
+          items: [
+            '**Node.js 24 or newer** — the same runtime Electron 43 embeds, so the app and its tests run on identical ground',
+            '**pnpm 10 or newer**',
           ],
         },
-      ],
-    },
-
-    {
-      id: 'unsigned',
-      eyebrow: 'When binaries exist',
-      heading: 'Read this before you run an unsigned build.',
-      lede: 'There are no published binaries yet. When there are, this is what you need to know — and it will move to the top of this page rather than being buried at the bottom of it.',
-      blocks: [
         {
-          kind: 'callout',
-          tone: 'warning',
-          title: 'Builds are not code-signed.',
-          body: [
-            'Code signing is not configured for this project yet, which has a concrete consequence: **your operating system will warn you, and it is right to.**',
-            '**Windows** will show a SmartScreen warning: "Windows protected your PC." To continue anyway, choose **More info → Run anyway**.',
-            '**macOS** will refuse to open it on the first attempt. Use **System Settings → Privacy & Security → Open Anyway**.',
-          ],
+          kind: 'code',
+          language: 'sh',
+          label: 'Terminal',
+          code: `git clone ${SITE.repo}.git
+cd tepegoz-browser
+pnpm install --frozen-lockfile
+pnpm dev`,
         },
         {
           kind: 'prose',
           body: [
-            'We are not going to tell you those warnings are nothing. They exist precisely so that unsigned software has to be run deliberately. Verify the checksum published with each release, and if you would rather not run unsigned code, **build from source** — the instructions above produce the same application from code you can read.',
-            'Signing is tracked as blocking for a real release.',
-          ],
-        },
-        {
-          kind: 'table',
-          caption: 'Planned release formats',
-          head: ['Platform', 'Format'],
-          rows: [
-            ['**Windows**', 'Installer (`.exe`)'],
-            ['**macOS**', 'Disk image (`.dmg`)'],
-            ['**Linux**', '`.deb` · `.rpm` · `.tar.gz`'],
+            'That is the whole thing. No build tools, no Python, no C++ toolchain, no database to compile.',
           ],
         },
       ],
@@ -145,11 +123,19 @@ pnpm dev`,
       id: 'expect',
       eyebrow: 'What you are getting',
       heading: 'Pre-release software.',
+      lede: 'Things will break, and two specific gaps are worth knowing before you trust it with anything that matters.',
       blocks: [
+        {
+          kind: 'list',
+          variant: 'deny',
+          items: [
+            '**No independent security audit has been performed.** The threat model is published and the architecture is readable, but no outside party has reviewed it.',
+            '**The automation has not been independently benchmarked.** The adversarial battery and the head-to-head comparison are written and pre-registered; the runs have not been paid for, so there is no measured attack-success-rate or task-success number, and we will not quote one until there is.',
+          ],
+        },
         {
           kind: 'prose',
           body: [
-            'No stable version, no update channel, no security audit. Things will break, and the automation has not been independently benchmarked against anything.',
             'What you can rely on: it is [AGPL-3.0](/legal/license), the entire source is public, there is no account, no telemetry and no backend — and the problems we already know about are written down instead of discovered by you.',
             `Known issues are published at [known issues](${REPO_FILES.knownIssues}). Phase-by-phase status is at [the roadmap](${REPO_FILES.phases}).`,
           ],

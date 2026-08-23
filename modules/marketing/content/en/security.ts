@@ -67,19 +67,27 @@ export const security: PageContent = {
     },
 
     {
-      id: 'locked',
-      eyebrow: 'Permanent limits',
-      heading: 'What is locked, permanently.',
-      lede: 'Some things are not a setting.',
+      id: 'unlock',
+      eyebrow: 'Who holds the keys',
+      heading: 'What only you can unlock.',
+      lede: 'The dangerous capabilities exist. None of them are on, and none of them can be turned on by the agent.',
       blocks: [
         {
           kind: 'list',
-          variant: 'deny',
+          variant: 'check',
           items: [
-            '**Sensitive categories cannot be automated** — banking, crypto, health, password managers — including Turkish banking and the whole `gov.tr` tree. No autonomy level unlocks them.',
-            '**CAPTCHA and human-verification challenges are never solved automatically.** They are handed to you.',
+            '**Sensitive categories ship disabled** — banking, crypto, health, password managers, including Turkish banking and the whole `gov.tr` tree. Each is a separate grant you make deliberately. No autonomy level turns one on for you, and the agent has no path to enabling one itself.',
+            '**Spending is bounded by a mandate you write.** The wallet, the ceiling, the payees and the expiry are yours, recorded before the run and enforced in the privileged process. The agent can spend inside that mandate and cannot widen it.',
             '**The agent cannot widen its own permissions.** Grants are minted from a plan you approved, scoped to the domains and tool classes in that plan, and they expire when the run ends.',
-            '**Irreversible actions require a specific confirmation** that names what is about to happen.',
+            '**Irreversible actions outside an active mandate require a specific confirmation** that names what is about to happen.',
+          ],
+        },
+        {
+          kind: 'callout',
+          tone: 'info',
+          title: 'A grant is not an autonomy level.',
+          body: [
+            'An autonomy level is a posture the agent runs under; a grant is a specific, revocable authorization you wrote. Autonomy can skip a prompt the kernel raised — it still cannot overturn a refusal. Only a grant can, and grants are created out of band, never by the agent and never mid-run.',
           ],
         },
       ],
@@ -94,33 +102,7 @@ export const security: PageContent = {
           kind: 'prose',
           body: [
             'The agentic browser category has a public failure record, and it is short reading. Indirect prompt injection driving real actions. An agent talked into reading a password manager\'s vault. A zero-click instruction that deleted files in connected cloud storage. Screenshots that captured logged-in sessions and shipped them to a server.',
-            `Tepegöz treats each of those as a test case rather than a headline. The published incidents are being turned into adversarial scenarios that the browser must fail — because a defence with no scenario that fails without it is an assumption, not a control. The incident-derived work items are tracked in the open, in [the safety phase](${REPO_FILES.safetyPhase}).`,
-          ],
-        },
-      ],
-    },
-
-    {
-      id: 'not-done',
-      eyebrow: 'Omissions',
-      heading: 'What we have not done.',
-      lede: 'On a security page, the omissions are the credibility.',
-      blocks: [
-        {
-          kind: 'list',
-          variant: 'deny',
-          items: [
-            '**No independent security audit.** None has been performed.',
-            '**Builds are unsigned.** Code signing is not configured, so anything you build is a development artifact and your operating system will say so.',
-            '**No published release.** There is no update channel and no stable version.',
-            '**The adversarial battery has not been run at claim grade.** The attack scenarios exist and the protocol is written; the measured attack-success-rate number does not exist yet, and we will not quote one until it does.',
-            '**Some capabilities ship deliberately inert** — built, reviewed, and switched off until the surrounding controls are proven.',
-          ],
-        },
-        {
-          kind: 'prose',
-          body: [
-            `The full threat model is published: [threat model](${REPO_FILES.threatModel}). Known problems are tracked at [known issues](${REPO_FILES.knownIssues}).`,
+            `Tepegöz treats each of those as a test case rather than a headline. The published incidents are being turned into adversarial scenarios that the browser must fail — because a defence with no scenario that fails without it is an assumption, not a control. The incident-derived work items are tracked in the open, in [the safety phase](${REPO_FILES.safetyPhase}). The full threat model is published at [threat model](${REPO_FILES.threatModel}), and known problems at [known issues](${REPO_FILES.knownIssues}).`,
           ],
         },
       ],

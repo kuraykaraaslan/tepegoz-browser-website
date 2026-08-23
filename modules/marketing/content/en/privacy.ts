@@ -115,7 +115,7 @@ export const privacy: PageContent = {
           variant: 'check',
           items: [
             '**An egress firewall** inspects outbound content for secrets and blocks what should not leave.',
-            '**Sensitive categories are locked out of automation entirely** — banking, crypto, health, password managers.',
+            '**Sensitive categories ship disabled** — banking, crypto, health, password managers. Enabling one is a deliberate, per-category decision you make; the agent has no path to making it for you.',
             '**Screenshots are not part of the default loop.** Visual capture is deliberately switched off, and before it is ever enabled, redaction of logged-in session chrome and an explicit per-run consent are prerequisites, not follow-ups.',
             '**Every action is journalled locally**, so you can audit what the agent saw and did — and that journal never leaves your machine.',
           ],
