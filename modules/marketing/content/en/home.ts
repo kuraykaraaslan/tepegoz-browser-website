@@ -22,7 +22,7 @@ export const home: PageContent = {
     // recording of the agent actually working is still owed — see the demo
     // section below, which keeps saying so.
     media: {
-      src: '/screenshots/extensions.png',
+      src: '/screenshots/agent-demo.gif',
       alt: 'The Tepegöz window showing its extensions page: nine first-party extension cards, each with a name, a description and an enable toggle.',
       caption: 'A real capture of the running application — the nine extensions it ships with.',
       width: 1440,
@@ -83,11 +83,6 @@ export const home: PageContent = {
       eyebrow: 'What it actually does',
       heading: 'Ask, review the plan, watch it run.',
       blocks: [
-        {
-          kind: 'assetPlaceholder',
-          label: 'Recording of the agent completing a real task',
-          note: 'A chaptered recording on a real site: the plan, a confirmation gate firing, and a recovery from something going wrong. A static screenshot cannot show the difference between a chat sidebar and an agent that drives tabs, and a mockup will not be substituted.',
-        },
         {
           kind: 'steps',
           items: [
