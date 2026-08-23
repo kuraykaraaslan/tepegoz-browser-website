@@ -1,0 +1,19 @@
+{
+  "name": "@kuraykaraaslan/kui-react",
+  "version": "1.0.1",
+  "private": true,
+  "description": "KUI React — vendored prebuilt bundle. Source: https://github.com/kuraykaraaslan/kui-react (dist/ is gitignored upstream and the package is not on npm, so the build output is committed here).",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "sideEffects": ["./styles/index.css"],
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "import": "./dist/index.mjs", "require": "./dist/index.js" },
+    "./ui": { "types": "./dist/ui.d.ts", "import": "./dist/ui.mjs", "require": "./dist/ui.js" },
+    "./app": { "types": "./dist/app.d.ts", "import": "./dist/app.mjs", "require": "./dist/app.js" },
+    "./common": { "types": "./dist/common.d.ts", "import": "./dist/common.mjs", "require": "./dist/common.js" },
+    "./styles": "./styles/index.css"
+  },
+  "files": ["dist", "styles"]
+}

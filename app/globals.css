@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+/* KUI React ships prebuilt JS — Tailwind cannot see the class names inside it
+   unless we point the scanner at the vendored bundle. Without this, every
+   `bg-surface-raised` / `border-border` inside a KUI component renders unstyled. */
+@source "../vendor/kui-react/dist";
+
+/* Class-based dark mode. KUI toggles `.dark` on <html> (ThemeSwitcher), so the
+   `dark:` variant has to follow that class rather than the OS media query —
+   otherwise a visitor who picks Light on a dark-OS machine gets half a theme. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   Tepegöz brand tokens
+
+   Values come from docs/brand/tepegoz-logo-standalone.html (brand v1.0 — 2026):
+     --navy #0C2135   --cyan #06AEC4   --eye #FFFFFF
+   The KUI token *names* are kept verbatim so every vendored component inherits
+   the brand without a single override. Only the values change.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* Cyan is the brand accent. It is darkened for interactive text on light
+     surfaces: #06AEC4 on white is 2.3:1, which fails WCAG 2.2 AA for text. */
+  --brand-navy:      #0C2135;
+  --brand-navy-soft: #1C3D5E;
+  --brand-cyan:      #06AEC4;
+
+  /* Consumed directly by the inline brand mark (TepegozMark), using the same
+     variable names the brand sheet uses so the SVG paths stay a verbatim copy. */
+  --navy: #0C2135;
+  --cyan: #06AEC4;
+  --eye:  #FFFFFF;
+
+  --primary:         #07697A;
+  --primary-hover:   #055565;
+  --primary-active:  #044351;
+  --primary-subtle:  #E8F8FA;
+  --primary-fg:      #ffffff;
+
+  --secondary:        #1C3D5E;
+  --secondary-hover:  #16324D;
+  --secondary-active: #11263B;
+  --secondary-subtle: #EDF2F7;
+  --secondary-fg:     #ffffff;
+
+  --surface-base:    #ffffff;
+  --surface-raised:  #F7F9FB;
+  --surface-overlay: #ECEFF3;
+  --surface-sunken:  #E3E8EE;
+
+  --text-primary:    #0C2135;
+  --text-secondary:  #55697C;
+  --text-disabled:   #8A98A8;
+  --text-inverse:    #ffffff;
+
+  --border:          #E2E9F0;
+  --border-strong:   #C2CEDA;
+  --border-focus:    #07697A;
+
+  --success:         #0F7B4F;
+  --success-subtle:  #ECFAF3;
+  --success-fg:      #08492F;
+
+  --warning:         #8A5A00;
+  --warning-subtle:  #FDF6E7;
+  --warning-fg:      #4A3000;
+
+  --error:           #B3261E;
+  --error-subtle:    #FDF0EF;
+  --error-fg:        #6B1712;
+
+  --info:            #0C5A8A;
+  --info-subtle:     #EAF4FB;
+  --info-fg:         #06344F;
+}
+
+.dark {
+  /* On navy surfaces the raw brand cyan clears AA comfortably, so dark mode
+     uses it undiluted — this is where the brand is meant to look like itself. */
+  /* On the dark field the mark's navy shell would sink into the background.
+     The brand sheet's own dark-field treatment lifts it to a soft navy. */
+  --navy: #1C3D5E;
+
+  --primary:          #06AEC4;
+  --primary-hover:    #3FC8DA;
+  --primary-active:   #7BDCE8;
+  --primary-subtle:   #0A3B47;
+  --primary-fg:       #05202A;
+
+  --secondary:        #90A8C0;
+  --secondary-hover:  #B0C3D6;
+  --secondary-active: #C8D6E4;
+  --secondary-subtle: #143A5E;
+  --secondary-fg:     #071729;
+
+  --surface-base:    #07172E;
+  --surface-raised:  #0C2135;
+  --surface-overlay: #143A5E;
+  --surface-sunken:  #0A1E38;
+
+  --text-primary:    #F3F7FB;
+  --text-secondary:  #9AA7B5;
+  --text-disabled:   #5C6B7A;
+  --text-inverse:    #0C2135;
+
+  --border:          #173E63;
+  --border-strong:   #2A5680;
+  --border-focus:    #06AEC4;
+
+  --success:         #4ADE80;
+  --success-subtle:  #052E16;
+  --success-fg:      #BBF7D0;
+
+  --warning:         #FBBF24;
+  --warning-subtle:  #3A2200;
+  --warning-fg:      #FEF3C7;
+
+  --error:           #FF8A80;
+  --error-subtle:    #3E0F0C;
+  --error-fg:        #FFDAD6;
+
+  --info:            #7BC4EE;
+  --info-subtle:     #06283D;
+  --info-fg:         #CDE8F9;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-brand-navy:      var(--brand-navy);
+  --color-brand-navy-soft: var(--brand-navy-soft);
+  --color-brand-cyan:      var(--brand-cyan);
+
+  --color-primary:         var(--primary);
+  --color-primary-hover:   var(--primary-hover);
+  --color-primary-active:  var(--primary-active);
+  --color-primary-subtle:  var(--primary-subtle);
+  --color-primary-fg:      var(--primary-fg);
+
+  --color-secondary:        var(--secondary);
+  --color-secondary-hover:  var(--secondary-hover);
+  --color-secondary-active: var(--secondary-active);
+  --color-secondary-subtle: var(--secondary-subtle);
+  --color-secondary-fg:     var(--secondary-fg);
+
+  --color-surface-base:    var(--surface-base);
+  --color-surface-raised:  var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-sunken:  var(--surface-sunken);
+
+  --color-text-primary:    var(--text-primary);
+  --color-text-secondary:  var(--text-secondary);
+  --color-text-disabled:   var(--text-disabled);
+  --color-text-inverse:    var(--text-inverse);
+
+  --color-border:          var(--border);
+  --color-border-strong:   var(--border-strong);
+  --color-border-focus:    var(--border-focus);
+
+  --color-success:         var(--success);
+  --color-success-subtle:  var(--success-subtle);
+  --color-success-fg:      var(--success-fg);
+
+  --color-warning:         var(--warning);
+  --color-warning-subtle:  var(--warning-subtle);
+  --color-warning-fg:      var(--warning-fg);
+
+  --color-error:           var(--error);
+  --color-error-subtle:    var(--error-subtle);
+  --color-error-fg:        var(--error-fg);
+
+  --color-info:            var(--info);
+  --color-info-subtle:     var(--info-subtle);
+  --color-info-fg:         var(--info-fg);
+}
+
+/* --------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+  /* Anchored headings must not hide under the sticky header. */
+  scroll-padding-top: 5.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background-color: var(--surface-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* A single visible focus treatment for the whole site — WCAG 2.2 AA (2.4.11). */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--primary-subtle);
+  color: var(--text-primary);
+}

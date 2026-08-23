@@ -1,0 +1,12 @@
+{
+  "name": "Tepegöz",
+  "short_name": "Tepegöz",
+  "description": "An agentic, security-first, local-first browser.",
+  "start_url": "/en/",
+  "display": "browser",
+  "background_color": "#07172E",
+  "theme_color": "#0C2135",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
