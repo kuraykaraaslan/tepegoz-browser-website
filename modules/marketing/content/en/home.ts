@@ -179,7 +179,10 @@ export const home: PageContent = {
         },
         {
           kind: 'ctas',
-          items: [{ label: 'See the honest status', href: '/roadmap', variant: 'outline' }],
+          items: [
+            { label: 'See the honest status', href: '/roadmap', variant: 'outline' },
+            { label: 'How Tepegöz compares', href: '/compare', variant: 'ghost' },
+          ],
         },
       ],
     },

@@ -40,6 +40,12 @@ export const REPO_FILES = {
   contributing: `${SITE_REPO}/blob/main/CONTRIBUTING.md`,
   safetyPhase: `${SITE_REPO}/blob/main/phases/ai-agent-super/phase-s6-safety-control-plane.md`,
   privateVulnReport: `${SITE_REPO}/security/advisories/new`,
+  aiCompetence: `${SITE_REPO}/blob/main/phases/ai-agent/README.md`,
+  research: `${SITE_REPO}/blob/main/docs/research/README.md`,
+  recordAgentScript: `${SITE_REPO}/blob/main/scripts/record-agent.mjs`,
+  tabModelAdr: `${SITE_REPO}/blob/main/docs/adr/0012-browser-tab-model.md`,
+  discussions: `${SITE_REPO}/discussions`,
+  releasesLatest: `${SITE_REPO}/releases`,
 } as const;
 
 /** Routes, defined once. Locale prefixes are applied by `localePath()`. */
@@ -53,6 +59,14 @@ export const ROUTES = {
   openSource: '/open-source',
   story: '/story',
   roadmap: '/roadmap',
+  compare: '/compare',
+  extensions: '/extensions',
+  networkPrivacy: '/network-privacy',
+  turkey: '/turkey',
+  help: '/help',
+  blog: '/blog',
+  blogScreenshot: '/blog/the-screenshot-that-captured-the-wrong-screen',
+  releases: '/releases',
   legalPrivacy: '/legal/privacy',
   legalTerms: '/legal/terms',
   legalLicense: '/legal/license',
@@ -60,35 +74,45 @@ export const ROUTES = {
 
 export type RouteKey = keyof typeof ROUTES;
 
-/** Every route that exists in this wave, in sitemap order. */
+/** Every route the site builds, in sitemap order. */
 export const ALL_ROUTES: readonly RouteKey[] = [
   'home',
   'howItWorks',
   'features',
+  'extensions',
   'security',
   'privacy',
+  'networkPrivacy',
   'download',
   'openSource',
   'story',
   'roadmap',
+  'compare',
+  'turkey',
+  'help',
+  'blog',
+  'blogScreenshot',
+  'releases',
   'legalPrivacy',
   'legalTerms',
   'legalLicense',
 ];
 
-/** Header navigation — the launch wave's primary nav. */
+/** Header navigation. */
 export const PRIMARY_NAV: readonly RouteKey[] = [
   'howItWorks',
   'features',
+  'extensions',
   'security',
   'privacy',
   'openSource',
   'roadmap',
+  'compare',
 ];
 
 export const FOOTER_NAV: readonly { heading: string; items: readonly RouteKey[] }[] = [
-  { heading: 'Product', items: ['howItWorks', 'features', 'download'] },
-  { heading: 'Trust', items: ['security', 'privacy', 'openSource'] },
-  { heading: 'Project', items: ['story', 'roadmap'] },
-  { heading: 'Legal', items: ['legalPrivacy', 'legalTerms', 'legalLicense'] },
+  { heading: 'Product', items: ['howItWorks', 'features', 'extensions', 'networkPrivacy', 'download'] },
+  { heading: 'Trust', items: ['security', 'privacy', 'openSource', 'compare'] },
+  { heading: 'Project', items: ['story', 'roadmap', 'turkey', 'blog', 'releases'] },
+  { heading: 'Legal', items: ['help', 'legalPrivacy', 'legalTerms', 'legalLicense'] },
 ];
