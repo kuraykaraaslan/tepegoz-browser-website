@@ -274,7 +274,10 @@ export const features: PageContent = {
         },
         {
           kind: 'ctas',
-          items: [{ label: 'How the security model works', href: '/security', variant: 'outline' }],
+          items: [
+            { label: 'How the security model works', href: '/security', variant: 'outline' },
+            { label: 'How Tepegöz compares', href: '/compare', variant: 'ghost' },
+          ],
         },
       ],
     },
@@ -316,6 +319,12 @@ export const features: PageContent = {
               state: 'planned',
               items: ['OpenVPN', 'Managed exit nodes, if and only if there is demand for them'],
             },
+          ],
+        },
+        {
+          kind: 'ctas',
+          items: [
+            { label: 'Per-tab VPN and Tor, in depth', href: '/network-privacy', variant: 'outline' },
           ],
         },
       ],
@@ -369,6 +378,10 @@ export const features: PageContent = {
             },
           ],
         },
+        {
+          kind: 'ctas',
+          items: [{ label: 'The nine, one by one', href: '/extensions', variant: 'outline' }],
+        },
       ],
     },
 
@@ -401,6 +414,12 @@ export const features: PageContent = {
                 'In-app interface scaling for high-density displays',
               ],
             },
+          ],
+        },
+        {
+          kind: 'ctas',
+          items: [
+            { label: 'Turkish as a first language', href: '/turkey', variant: 'outline' },
           ],
         },
       ],

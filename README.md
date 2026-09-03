@@ -25,16 +25,21 @@ Three rules from that folder's README are enforced here rather than left to revi
 | `[BUILD NOTE]` / `[CLAIM]` markers must never render | `npm run content:check` |
 | `draft-legal` pages must not read as final | `StatusBanner` + `noindex` + highlighted `{{PLACEHOLDER}}`s |
 
-`content:check` also fails on an internal link to a route the site does not build, which is how the
-second-wave pages stay out of the nav without leaving dead links behind.
+`content:check` also fails on an internal link to a route the site does not build, so a page can only
+link somewhere that exists.
 
 ### This wave
 
-**Launch wave, English only.** Twelve pages: home, how-it-works, features, security, privacy,
-download, open-source, story, roadmap, and the three legal documents.
+**English only, twenty routes.** The launch twelve — home, how-it-works, features, security, privacy,
+download, open-source, story, roadmap, and the three legal documents — plus the second wave, now
+built from the same source folder: `/extensions`, `/network-privacy`, `/compare`, `/turkey`, `/help`,
+`/blog` (with its first post at `/blog/the-screenshot-that-captured-the-wrong-screen`), and
+`/releases`.
 
-Not built yet (second wave in the source folder): `/extensions`, `/network-privacy`, `/compare`,
-`/turkey`, `/help`, `/blog`, `/releases`. Links to them were removed rather than left dangling.
+`/extensions`, `/network-privacy`, `/help` and `/releases` are `status: needs-assets` — the copy is
+final and the pages render an honest labelled gap where a screenshot, a diagram, or a real download
+belongs. The FAQ on `/help` reconciles one source answer (automatic CAPTCHA solving) down to what the
+code actually does today, because on this site the claims track the code.
 
 ---
 
