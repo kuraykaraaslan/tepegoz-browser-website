@@ -1,6 +1,6 @@
 import type { PageContent } from '@/types/content';
 
-/** Source: tepegoz-browser/docs/website/how-it-works.md (status: needs-assets) */
+/** Source: tepegoz-browser/docs/website/how-it-works.md (status: needs-assets) @sourceSha256 5d905ef5 (2026-08-23) */
 export const howItWorks: PageContent = {
   route: '/how-it-works',
   title: 'How Tepegöz works — plan, act, and stay in control',
@@ -29,9 +29,34 @@ export const howItWorks: PageContent = {
         {
           kind: 'steps',
           items: [
+            // Corrected, because the step instructed the reader to do something the code does not do.
+            //
+            // It read "Press `Ctrl+K` and type what you want… The command palette has four modes",
+            // which is a false capability claim twice over. The palette's only host is
+            // `apps/desktop/src/renderer/src/command-palette-host.tsx`, whose `sources` memo ends
+            // `return { chat, do: [], make: [], tasks: [] };` — three of the four modes hold nothing.
+            // And a typed goal does not fall through: Enter runs `runSelected` in
+            // `extensions/ext-agent/src/command-palette.tsx`, which opens
+            // `const command = results[cursor]; if (command === undefined) return;`, so on an empty
+            // mode or an unmatched query it does nothing. There is no free-text dispatch in the
+            // palette at all.
+            //
+            // The two paths that really start a run, both read in the product source:
+            //   • the Agent Console composer — `extensions/ext-agent/src/panel-actions.ts` `onRun()`
+            //     calls `api.runAgent({ prompt, groupId, … })`; the panel is the `com.tepegoz.agent`
+            //     extension's `sidebar` surface (`manifest.ts`: `actions: { click: 'sidebar' }`),
+            //     titled "Agent Console", its box placeholded "Tell Tepegöz what to do on this page…",
+            //     and Enter-without-Shift submits (`panel-composer.tsx`).
+            //   • the address bar's explicit `@agent` command — `packages/omnibox/src/omnibox-commands.ts`
+            //     registers `{ id: 'agent', prefix: '@agent', freeText: true }` and
+            //     `apps/desktop/src/renderer/src/app-omnibox-history.ts` `startAgentRun` opens the
+            //     console before calling `runAgent`. Never inferred from ordinary text, which is why
+            //     the address-bar sentence below is untouched and still true.
+            //
+            // The palette keeps its place here — it exists and it works — described for what it is.
             {
               title: 'Ask',
-              body: 'Press `Ctrl+K` and type what you want, in English or Turkish. The command palette has four modes — **Chat** for questions, **Do** for tasks on the current page, **Make** for producing something, and **Tasks** for work that runs on a schedule. The address bar stays a separate thing entirely. It navigates and searches, deterministically, and never turns a typo into an AI request.',
+              body: 'Open the **Agent Console** and tell it what you want, in English or Turkish. It is the Agent panel in the toolbar, and it opens beside the page you are on: type the goal in the box at the bottom, press `Enter`, and the run starts in that same panel — the one that then shows you every step. The address bar stays a separate thing entirely. It navigates and searches, deterministically, and never turns a typo into an AI request. The one route from there to the agent is a command you type on purpose: `@agent`, then the task. `Ctrl+K` opens the command palette, which is a different surface again — today it runs browser commands (new tab, reopen a closed tab, reload, settings), and its **Do**, **Make** and **Tasks** tabs are deliberately shown empty while those modes are built. Typing a goal into the palette does not start a run.',
             },
             {
               title: 'Perceive',

@@ -1,0 +1,51 @@
+{
+  "agent-demo": {
+    "capturedAt": null,
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": null,
+    "note": "Provenance not recorded. 1066x864 does not match the output of any capture script in tepegoz-browser/scripts (screenshots.mjs shoots 1440x900; record-agent.mjs writes WebM), so the recording was made some other way and nobody wrote down how. Added to this repo in ebe52e9 on 2026-08-23; that is when the bytes arrived, not when they were captured. Do not conflate it with record-agent.mjs output, which is under a publication ban because it drives a command-palette path that dispatches nothing."
+  },
+  "agent-demo-poster": {
+    "capturedAt": "2026-09-04",
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": "ffmpeg (frame 76 of 76 of agent-demo.gif)",
+    "note": "Not an independent capture. This is the LAST frame of agent-demo.gif, extracted with ffmpeg so the hero has a still to show before playback. It inherits that recording's unrecorded provenance — see the `agent-demo` entry — and it shows the run in its completed state (both steps done, the answer rendered), which is why the final frame was chosen over the first: a poster of frame 0 would show an idle window and undersell what the recording contains. capturedAt is the extraction date, not a capture date."
+  },
+  "browser-chrome": {
+    "capturedAt": "2026-08-23",
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": null,
+    "note": "Renamed on import; the matching capture-script entry is `01-newtab`. `tool` is null on purpose, and this paragraph is why — it is the long form the other four 1440x900 stills point at. Attribution to `tepegoz-browser/scripts/screenshots.mjs` is an INFERENCE, not a record. It rests on four converging signals: the file is 1440x900, which is exactly the viewport that script sets before calling capturePage(); four of the five keys are the names it writes with the ordinal stripped (`03-command-palette`, `05-extensions`, `12-providers`, `14-network-privacy`) and this one was renamed from a fifth, `01-newtab`; the commit that added the bytes, 1a90893, says they were taken by driving the app with Playwright's Electron driver, and that script is the only such driver in the browser repo; and that script was committed 45 seconds later, in f160d4f, out of the same working session. Converging is still not recorded — there is no run log and no ingest stamp — so the claim lives here in prose, where it reads as reasoning, instead of in `tool`, which this pipeline fills only from an ingest it actually performed. capturedAt is the date of commit 1a90893, which added the file, not an independently recorded capture timestamp."
+  },
+  "command-palette": {
+    "capturedAt": "2026-08-23",
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": null,
+    "note": "Capture-script entry `03-command-palette`. `tool` is null because nobody recorded one: attribution to `tepegoz-browser/scripts/screenshots.mjs` is an inference from dimensions, filename and commit timing — see the `browser-chrome` entry for the evidence and its limits — and an inference does not belong in a field that otherwise holds records. capturedAt is the date of commit 1a90893, which added the file, not an independently recorded capture timestamp."
+  },
+  "extensions": {
+    "capturedAt": "2026-08-23",
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": null,
+    "note": "Capture-script entry `05-extensions`. `tool` is null because nobody recorded one: attribution to `tepegoz-browser/scripts/screenshots.mjs` is an inference from dimensions, filename and commit timing — see the `browser-chrome` entry for the evidence and its limits — and an inference does not belong in a field that otherwise holds records. capturedAt is the date of commit 1a90893, which added the file, not an independently recorded capture timestamp."
+  },
+  "network-privacy": {
+    "capturedAt": "2026-08-23",
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": null,
+    "note": "Capture-script entry `14-network-privacy`. `tool` is null because nobody recorded one: attribution to `tepegoz-browser/scripts/screenshots.mjs` is an inference from dimensions, filename and commit timing — see the `browser-chrome` entry for the evidence and its limits — and an inference does not belong in a field that otherwise holds records. capturedAt is the date of commit 1a90893, which added the file, not an independently recorded capture timestamp."
+  },
+  "providers": {
+    "capturedAt": "2026-08-23",
+    "browserCommit": null,
+    "appVersion": null,
+    "tool": null,
+    "note": "Capture-script entry `12-providers`. `tool` is null because nobody recorded one: attribution to `tepegoz-browser/scripts/screenshots.mjs` is an inference from dimensions, filename and commit timing — see the `browser-chrome` entry for the evidence and its limits — and an inference does not belong in a field that otherwise holds records. capturedAt is the date of commit 1a90893, which added the file, not an independently recorded capture timestamp."
+  }
+}

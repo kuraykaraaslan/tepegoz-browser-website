@@ -1,7 +1,7 @@
 import type { PageContent } from '@/types/content';
 import { REPO_FILES, SITE } from '@/libs/config/site';
 
-/** Source: tepegoz-browser/docs/website/open-source.md (status: ready) */
+/** Source: tepegoz-browser/docs/website/open-source.md (status: ready) @sourceSha256 2fd5ca55 (2026-08-23) */
 export const openSource: PageContent = {
   route: '/open-source',
   title: 'Open source — Tepegöz is AGPL-3.0',

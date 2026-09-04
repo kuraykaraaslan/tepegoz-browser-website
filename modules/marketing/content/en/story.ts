@@ -1,7 +1,7 @@
 import type { PageContent } from '@/types/content';
 import { SITE } from '@/libs/config/site';
 
-/** Source: tepegoz-browser/docs/website/story.md (status: ready) */
+/** Source: tepegoz-browser/docs/website/story.md (status: ready) @sourceSha256 0ebe7e04 (2026-08-23) */
 export const story: PageContent = {
   route: '/story',
   title: 'The story behind Tepegöz',

@@ -3,6 +3,7 @@ import { REPO_FILES } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/privacy.md (status: ready)
+ * @sourceSha256 ad0492f9 (2026-08-23)
  *
  * This is the *product* privacy page — how the browser behaves. The site's own
  * legal privacy policy is a separate document at `/legal/privacy`. Its build

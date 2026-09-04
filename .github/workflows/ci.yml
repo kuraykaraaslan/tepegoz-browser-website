@@ -1,0 +1,61 @@
+# CI for tepegoz-website.
+#
+# Why this file exists at all: the media ledger, the content rules and the
+# `describes` stamps were built to make a class of defect *unexpressible* —
+# a swapped image under stale alt text, a manifest that no longer describes the
+# bytes. None of that is worth anything if the checks only ever run when someone
+# remembers to type `npm run check`. Until this workflow landed, nothing ran them
+# on a push and nothing ran them on a pull request.
+#
+# Why there is no scheduled job: a daily run of an honesty check produces a red
+# tick on days nobody changed anything, which trains everyone to ignore it, and a
+# muted honesty check is worse than no honesty check. These gates are about the
+# diff, so they run on the diff.
+
+name: check
+
+# Both triggers, deliberately. A branch pushed and then opened as a PR runs this
+# twice; that is the accepted cost of the two things each trigger buys — a push
+# is checked before anyone opens a PR, and a PR is checked as the merge target
+# sees it. Narrowing `push` to `main` would halve the runs and remove the first.
+on:
+  push:
+  pull_request:
+
+# A second push to the same branch makes the first run's answer irrelevant.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Next 16.2.4 declares `engines.node >= 20.9.0`; that is the floor. CI runs
+      # 24.x, which is the version the site is actually developed and verified on
+      # — a green CI on a runtime nobody uses is not evidence about the runtime
+      # people use.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+
+      # `ci`, not `install`: the lockfile is the input, and a workflow that is
+      # allowed to resolve a different tree is testing a different repo.
+      - run: npm ci
+
+      # `npm run build` re-runs `npm run check` — that is deliberate, and it is
+      # the whole point of the fix (see README, "How the gates run"). This step
+      # is kept separate anyway so a lint or ledger failure is attributed here,
+      # in a step named `check`, instead of being buried a hundred lines into a
+      # Next build log. The duplicated work is a few seconds.
+      - run: npm run check
+
+      # The production build, byte-for-byte the command Vercel runs
+      # (`vercel.json` pins `buildCommand` to this same script).
+      - run: npm run build

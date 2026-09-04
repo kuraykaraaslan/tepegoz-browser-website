@@ -1,4 +1,5 @@
 import type { RouteKey } from '@/libs/config/site';
+import type { ImageKey, MotionKey } from '@/modules/marketing/media/manifest.generated';
 
 /**
  * The page content model.
@@ -12,6 +13,16 @@ import type { RouteKey } from '@/libs/config/site';
  *     is stripped from production output.
  *   - `status: needs-assets` pages cannot ship as "done"; the flag travels with
  *     the content so the page can say so instead of quietly pretending.
+ *
+ * A third rule arrived with the media ledger, and it is why the media blocks
+ * below look the way they do. Content owns **copy**; the ledger owns **facts
+ * about files**. A block names its asset by key and stamps the hash it was
+ * written against; it never carries a `src`, a `width` or a `height`. A human
+ * typing a fact about a file is exactly how the home page came to declare
+ * `1440x900` over a 1066x864 GIF — a layout shift on the largest element above
+ * the fold, in the one place the site's own rules forbid one. Deleting those
+ * fields from the type makes that defect unexpressible rather than merely
+ * discouraged.
  */
 
 /** Locale-independent nav labels, keyed by route. */
@@ -43,6 +54,35 @@ export type Cta = {
  * accepted so the common, unstarred case stays terse.
  */
 export type Item = RichText | { text: RichText; star: true };
+
+/**
+ * A human's acknowledgement that they read *this* alt text against *these* bytes.
+ *
+ * The value is the first eight hex characters of a sha256 over the **pair** —
+ * the asset's own sha256, a newline, then the alt text verbatim — which is
+ * exactly what `describes(asset, alt)` in `modules/marketing/media/types.ts`
+ * returns, and the only place that definition lives. Hashing the pair rather
+ * than the bytes alone is what makes the stamp survive the second way alt text
+ * goes stale: repointing `asset:` at a different ledger key while leaving the
+ * sentence alone. Under a bytes-only stamp that edit could be waved through by
+ * copying the new row's hash prefix out of `manifest.generated.ts`; there is now
+ * no correct stamp for a new pairing recorded anywhere, so it has to be computed
+ * by `scripts/media-restamp.mjs`, which shows the image's path and the alt text
+ * side by side while it computes it.
+ *
+ * It is typed as a plain `string` rather than derived from the ledger's literal
+ * types on purpose: a type-level derivation would report a mismatch as an
+ * unassignable string literal buried in a union error, and the one thing this
+ * stamp has to do when it breaks is tell a human *why* it broke. Two things do
+ * the comparing — `node scripts/media-restamp.mjs --check`, inside
+ * `npm run check`, which reports by file and line; and `assertDescribes()` in
+ * `modules/marketing/content/index.ts`, inside `next build`, which refuses to
+ * render the page at all.
+ *
+ * It is a tripwire, not a checksum: 32 bits over a dozen curated stamps. Its only
+ * job is to stop matching when the pairing under a piece of copy changes.
+ */
+export type MediaStamp = string;
 
 export type ProseBlock = {
   kind: 'prose';
@@ -83,17 +123,36 @@ export type CalloutBlock = {
 };
 
 /**
- * The Available / Planned split.
+ * How far along a capability actually is.
  *
  * `features.md` is explicit that these must not merge under one heading and
  * must carry visibly different weights — "a single undifferentiated list is the
  * most common way product sites lie without lying". Modelling the states in the
  * type keeps a future edit from flattening them back together.
+ *
+ * Two of these exist because `tepegoz-browser/phases/README.md` distinguishes
+ * things this site previously could not say, and a vocabulary that cannot say
+ * them forces the writer to round up:
+ *
+ *   - `measurement-owed` — the code landed and the phase is *not* closed,
+ *     because nothing has been measured on the harness yet. It is "built,
+ *     unproven", and it must never read as a success state; rounding it up to
+ *     `available` is precisely the lie the split exists to prevent.
+ *   - `frozen` — a deliberate stop. Someone decided this is out of scope for
+ *     now. It is a scope decision, not a failure and not a promise, so it reads
+ *     as neither a warning nor a plan.
  */
+export type CapabilityState =
+  | 'available'
+  | 'in-progress'
+  | 'measurement-owed'
+  | 'planned'
+  | 'frozen';
+
 export type CapabilityBlock = {
   kind: 'capability';
   groups: {
-    state: 'available' | 'planned' | 'in-progress';
+    state: CapabilityState;
     /** Optional override; defaults to a label derived from `state`. */
     label?: string;
     items: Item[];
@@ -105,16 +164,83 @@ export type CapabilityBlock = {
  *
  * `caption` is what the reader is looking at; `alt` is what the image conveys
  * to someone who cannot see it, and the two are deliberately separate fields so
- * neither degrades into the other. Dimensions are required: the intrinsic size
- * reserves the space, and "no layout shift on the hero" is a site-wide rule.
+ * neither degrades into the other. Both are copy, so both live here and both
+ * translate with the page.
+ *
+ * The file itself is addressed by key. Its `src`, `width` and `height` come from
+ * `MEDIA[asset]`, measured from the bytes — the intrinsic size still reserves
+ * layout space, it is just no longer transcribed by hand.
  */
 export type FigureBlock = {
   kind: 'figure';
-  src: string;
+  /** Key into the generated ledger. Rendered as an `<img>`. */
+  asset: ImageKey;
+  describes: MediaStamp;
   alt: string;
   caption?: RichText;
-  width: number;
-  height: number;
+};
+
+/** One labelled offset into a recording. `atMs` is measured from the start. */
+export type Chapter = { atMs: number; title: string };
+
+/**
+ * A recording: a `<video>`, or an animated image that must not loop unbidden.
+ *
+ * `asset` accepts either kind because the two are the same editorial object —
+ * "a clip of the product working" — and the DOM element they need is a detail
+ * of the file format. `MotionKey` is `never` until a `.webm` is ingested, so a
+ * page can only reach the animated-image path today; the video path compiles
+ * now and starts working the moment the first capture lands, with nothing here
+ * to change.
+ *
+ * `poster` is the still shown *before* playback. It is an ordinary ledger image
+ * with its own stamp, because a poster is a claim about the recording exactly
+ * the way alt text is a claim about a screenshot. It is optional and there is no
+ * poster in the ledger yet, so today the renderer shows an honest labelled gap
+ * with a play control rather than a fabricated frame.
+ */
+export type MotionBlock = {
+  kind: 'motion';
+  asset: MotionKey | ImageKey;
+  describes: MediaStamp;
+  /** What the recording conveys — the same claim whether it is playing or not. */
+  alt: string;
+  caption?: RichText;
+  poster?: { asset: ImageKey; describes: MediaStamp };
+  /**
+   * A text alternative for spoken content (WCAG 1.2.1). Required only when the
+   * asset carries audio; a silent screen recording is fully described by `alt`.
+   */
+  transcript?: readonly RichText[];
+  chapters?: readonly Chapter[];
+};
+
+/**
+ * Several shots of the same subject, where **some of them may not exist yet**.
+ *
+ * This block exists because `extensions.ts` promises nine extension panels and
+ * will have some-of-nine for months. Without `expected`, the only two states the
+ * content model could express were "all nine" and "none", and a page that shows
+ * four while its copy says nine is the quiet kind of dishonesty this site is
+ * supposed to be arguing against. Set `expected` to what the copy promises and
+ * the renderer shows the delivered shots *and* a labelled gap for the rest.
+ */
+export type GalleryItem = {
+  asset: ImageKey;
+  describes: MediaStamp;
+  alt: string;
+  caption?: RichText;
+};
+
+export type GalleryBlock = {
+  kind: 'gallery';
+  columns?: 2 | 3;
+  items: readonly GalleryItem[];
+  /** How many the surrounding copy promises. Omit when the set is complete. */
+  expected?: number;
+  /** Heading for the gap panel. Shown only when `items.length < expected`. */
+  pendingLabel?: string;
+  pendingNote?: string;
 };
 
 export type CodeBlock = {
@@ -151,6 +277,8 @@ export type Block =
   | CapabilityBlock
   | CodeBlock
   | FigureBlock
+  | MotionBlock
+  | GalleryBlock
   | CtasBlock
   | AssetPlaceholderBlock;
 
@@ -165,6 +293,18 @@ export type Section = {
 
 export type PageStatus = 'ready' | 'needs-assets' | 'draft-legal';
 
+/**
+ * What a hero can show beside its copy: a still, or a recording.
+ *
+ * Deliberately the block types themselves rather than a parallel shape. The
+ * hero used to carry its own `{ src, alt, caption, width, height }`, which meant
+ * every improvement to figures — key addressing, the `describes` stamp, the
+ * click-to-play treatment for animated media — had to be made twice or not at
+ * all, and "not at all" is what happened: the looping GIF above the fold was the
+ * one piece of media on the site with no way to stop it.
+ */
+export type HeroMedia = FigureBlock | MotionBlock;
+
 export type Hero = {
   eyebrow?: string;
   headline: string;
@@ -173,18 +313,16 @@ export type Hero = {
   /** The pre-release condition, shown directly under the buttons at body weight. */
   statusNote?: { body: RichText; href?: string; linkLabel?: string };
   /**
-   * A product shot under the hero copy.
+   * The product shot or recording beside the hero copy.
    *
-   * This is a picture of the application, not evidence that a task completed.
-   * It does not discharge `home.md`'s standing requirement for a real recording
-   * of the agent working — that asset is still owed, and the page keeps saying
-   * so in its own demo section.
-   *
-   * Rendered eagerly and at high fetch priority: it is above the fold on most
-   * screens, and lazy-loading the largest element in the viewport is how a
-   * hero ends up shifting after paint.
+   * A `figure` here is rendered eagerly and at high fetch priority: it is above
+   * the fold on most screens, and lazy-loading the largest element in the
+   * viewport is how a hero ends up shifting after paint. A `motion` here is the
+   * opposite — nothing above the fold is allowed to start moving on its own, so
+   * it loads on activation and the poster (or the labelled gap standing in for
+   * one) is what paints.
    */
-  media?: { src: string; alt: string; caption?: RichText; width: number; height: number };
+  media?: HeroMedia;
 };
 
 export type PageContent = {

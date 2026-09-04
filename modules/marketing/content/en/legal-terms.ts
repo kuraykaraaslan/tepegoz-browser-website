@@ -2,6 +2,7 @@ import type { PageContent } from '@/types/content';
 
 /**
  * Source: tepegoz-browser/docs/website/legal-terms.md
+ * @sourceSha256 458bb6b3 (2026-08-23)
  * (status: draft-legal — DRAFT, NOT LEGAL ADVICE, DO NOT RELY ON AS-IS)
  *
  * Structural point the source asks a reviewer to preserve, repeated here so an

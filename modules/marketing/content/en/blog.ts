@@ -3,6 +3,7 @@ import { SITE } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/blog.md (status: ready)
+ * @sourceSha256 b7fb6b12 (2026-08-23)
  *
  * Index page plus editorial policy. Posts are separate content files. The one
  * published post has its own route; the launch posts are listed but not

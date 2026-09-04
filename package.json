@@ -5,14 +5,21 @@
   "description": "Static marketing site for Tepegöz — copy sourced from tepegoz-browser/docs/website, UI built on KUI React.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run check && next build",
     "start": "npx serve@latest out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "kui:check": "node scripts/kui-check-imports.mjs",
     "kui:sync": "node scripts/kui-sync.mjs",
     "content:check": "node scripts/content-check.mjs",
-    "check": "npm run kui:check && npm run content:check && npm run typecheck && npm run lint",
+    "media:manifest": "node scripts/media-manifest.mjs",
+    "media:check": "node scripts/media-check.mjs && node scripts/media-manifest.mjs --check",
+    "media:stamps": "node scripts/media-restamp.mjs --check",
+    "media:restamp": "node scripts/media-restamp.mjs",
+    "media:ingest": "node scripts/media-ingest.mjs",
+    "sources:check": "node scripts/sources-check.mjs",
+    "known-issues:sync": "node scripts/known-issues-sync.mjs",
+    "check": "npm run kui:check && npm run media:check && npm run media:stamps && npm run content:check && npm run sources:check && npm run typecheck && npm run lint",
     "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {

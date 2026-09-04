@@ -2,6 +2,7 @@ import type { PageContent } from '@/types/content';
 
 /**
  * Source: tepegoz-browser/docs/website/turkey.md (status: ready)
+ * @sourceSha256 b0f29dc1 (2026-08-23)
  *
  * Note from the source: this is the one page where the Turkish version is the
  * original and the English version explains the position to an outside reader.

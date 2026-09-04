@@ -1,7 +1,7 @@
 import type { PageContent } from '@/types/content';
 import { REPO_FILES, SITE } from '@/libs/config/site';
 
-/** Source: tepegoz-browser/docs/website/security.md (status: ready) */
+/** Source: tepegoz-browser/docs/website/security.md (status: ready) @sourceSha256 a80696d9 (2026-09-02) */
 export const security: PageContent = {
   route: '/security',
   title: 'Security — Tepegöz',

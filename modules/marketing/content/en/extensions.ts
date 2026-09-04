@@ -2,11 +2,37 @@ import type { PageContent } from '@/types/content';
 
 /**
  * Source: tepegoz-browser/docs/website/extensions.md (status: needs-assets)
+ * @sourceSha256 ceceab4b (2026-08-23)
  *
  * Build note from the source, carried forward: one card per extension, each
  * with a real screenshot of its panel. Nine cards. The panel shots do not
  * exist yet, so the page ships with an honest asset gap rather than icons
  * standing in for working surfaces.
+ *
+ * That note stays here, in a comment, and it is worth saying why at length. The
+ * gallery's pending copy below used to be the build note transposed into the
+ * page: "these are working surfaces and they photograph well; icons alone would
+ * undersell them" is the instruction's own argument for why the shots are
+ * required, published to a visitor who was never asked to take them and could
+ * not if they were. It survived review because it is fluent — and because
+ * `content:check` greps for the literal marker token, which a transposition
+ * carries no trace of. The rule that check stands in for is broader than the
+ * token it can see: an instruction is addressed to whoever builds the page, copy
+ * is addressed to whoever reads it, and the two are not interchangeable however
+ * well the sentence scans. So the pending strings below say what is missing and
+ * why it is not here yet, to someone who came to look at the extensions — and
+ * they promise no date, because nobody has earned the right to promise one.
+ *
+ * That gap is a `gallery` with `expected: 9` and no items rather than an
+ * `assetPlaceholder`, and the difference is not cosmetic. Nine panel shots will
+ * not arrive in one sitting — they need nine separate capture sessions against a
+ * running build — so the page's real future state is *some* of nine, for
+ * months. `assetPlaceholder` can only say "none yet"; the moment the first shot
+ * landed, someone would have had to choose between deleting the slot (and
+ * silently promising nine while showing one) or keeping a panel that says
+ * nothing arrived while one plainly has. A gallery renders what exists and a
+ * badged "N of 9 captured" beside it, so partial delivery is representable the
+ * day it happens instead of being a small dishonesty to be discovered later.
  */
 export const extensions: PageContent = {
   route: '/extensions',
@@ -50,11 +76,10 @@ export const extensions: PageContent = {
       blocks: [
         {
           kind: 'figure',
-          src: '/screenshots/extensions.png',
+          asset: 'extensions',
+          describes: '5ac8ba2d',
           alt: 'The extensions page: nine first-party extension cards, each enabled, with names and descriptions.',
           caption: 'All nine, first-party, enabled by default — each one built on the shared capability plane.',
-          width: 1440,
-          height: 900,
         },
         {
           kind: 'cards',
@@ -64,9 +89,18 @@ export const extensions: PageContent = {
               title: 'Adblock Shield',
               body: 'Ad and tracker blocking with cosmetic filtering, applied per session partition — including inside a tunnelled tab, in the same order, with no system-wide proxy interception anywhere. Because Tepegöz is not a Chrome extension, it is not subject to the platform restrictions that hollowed out blockers elsewhere.',
             },
+            // Was: "Also the home of the command palette's four modes." Three of those four hold
+            // nothing. The palette is presentational and takes its commands from a host, and the
+            // one host — `apps/desktop/src/renderer/src/command-palette-host.tsx` — ends its
+            // `sources` memo `return { chat, do: [], make: [], tasks: [] }`; Enter on an empty mode
+            // returns before dispatching, so a goal typed into the palette starts no run. /features
+            // carries the full finding and the in-progress entry. What this card had to stop doing
+            // is pointing a reader at the palette as the way into the agent — that is the sidebar
+            // the card is about, which is why the correction makes it a shorter sentence, not a
+            // longer one.
             {
               title: 'Agent',
-              body: "The sidebar where you hand work to the browser: the conversation, the plan, the live step feed, and the approval prompts. Also the home of the command palette's four modes.",
+              body: "The sidebar where you hand work to the browser, and the surface that actually drives it: the conversation, the plan, the live step feed, and the approval prompts. This extension also ships the command palette, whose **Do, Make and Tasks** modes are still empty — the tabs are there, the commands are not, and a goal typed into the palette does not start a run.",
             },
             {
               title: 'Macros',
@@ -99,9 +133,13 @@ export const extensions: PageContent = {
           ],
         },
         {
-          kind: 'assetPlaceholder',
-          label: 'A panel screenshot for each of the nine extensions',
-          note: 'These are working surfaces and they photograph well; icons alone would undersell them. The shots are taken from a real build and land here when they exist.',
+          kind: 'gallery',
+          columns: 3,
+          expected: 9,
+          items: [],
+          pendingLabel: 'Screenshots of the nine extension panels',
+          pendingNote:
+            'None of the nine have been photographed yet. Every shot has to come from a running build with that extension open and actually doing something, which is nine separate sittings rather than one afternoon. Nothing is standing in for them here — not an icon, not a mockup — so the count above is what exists, and it goes up one panel at a time.',
         },
       ],
     },

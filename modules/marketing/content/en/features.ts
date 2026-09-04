@@ -2,6 +2,7 @@ import type { PageContent } from '@/types/content';
 
 /**
  * Source: tepegoz-browser/docs/website/features.md (status: needs-assets)
+ * @sourceSha256 fc6a64bb (2026-09-02)
  *
  * Two rules from the source file are load-bearing here:
  *
@@ -14,13 +15,34 @@ import type { PageContent } from '@/types/content';
  * Anything decided but not yet implemented belongs in Planned. Automatic
  * CAPTCHA/2FA clearing and per-category grants are decided in ADR-0039 and
  * tracked in Phase S6 PR9; neither has landed, so both sit in Planned.
+ *
+ * Status: `ready`, promoted from `needs-assets`. This is worth spelling out
+ * because it is the opposite of the usual defect — the flag was not covering for
+ * a missing asset, it was inherited from the source file's front matter and had
+ * simply gone stale. What was checked before flipping it:
+ *
+ *   - `features.md` asks for no asset anywhere. Searched all 245 lines for
+ *     screenshot, recording, video, diagram, capture, image, figure, mockup,
+ *     illustration and shot; the only hits are its own front-matter `status:`
+ *     line and the word "video" inside the Unified Player entry.
+ *   - Its two build-note blocks are layout instructions, not asset asks — keep
+ *     Available and Planned visibly distinct, and render the ★ legend before the
+ *     first starred item. Both are satisfied above, by the `capability` block's
+ *     states and by the `legend` section's position.
+ *   - All five figures resolve against the media ledger and every stamp matches
+ *     the bytes on disk: browser-chrome 789617d6, command-palette 509d5e27,
+ *     providers d23e5442, network-privacy fa5c8a16, extensions c76cb111.
+ *
+ * So there is no honest gap to render here, and inventing one to satisfy a flag
+ * would be its own small dishonesty. Gap panels belong on the pages that
+ * actually owe something.
  */
 export const features: PageContent = {
   route: '/features',
   title: 'Features — Tepegöz',
   description:
     'Everything Tepegöz ships today — browser, agent, security kernel, network privacy, extensions — separated honestly from what is still planned.',
-  status: 'needs-assets',
+  status: 'ready',
 
   hero: {
     eyebrow: 'Features',
@@ -51,11 +73,10 @@ export const features: PageContent = {
       blocks: [
         {
           kind: 'figure',
-          src: '/screenshots/browser-chrome.png',
+          asset: 'browser-chrome',
+          describes: '47137340',
           alt: 'The Tepegöz window: tab strip, address bar, bookmarks bar, and the new-tab page with a search field.',
           caption: 'Tabs, a deterministic address bar, and a bookmarks bar — each tab an isolated view.',
-          width: 1440,
-          height: 900,
         },
         {
           kind: 'capability',
@@ -105,11 +126,14 @@ export const features: PageContent = {
       blocks: [
         {
           kind: 'figure',
-          src: '/screenshots/command-palette.png',
+          asset: 'command-palette',
+          describes: '19195524',
           alt: 'The command palette open over a page, with Chat, Do, Make and Tasks tabs and a command input.',
-          caption: '`Ctrl+K` — the four modes, over whatever page you are on.',
-          width: 1440,
-          height: 900,
+          // "over whatever page you are on" read as a claim about SUMMONING it — from any page,
+          // whatever has focus. That half is not true yet (see the in-progress group below), while
+          // the other half — that it renders over the page — is what this very screenshot shows.
+          // So the caption now says where the keystroke works and lets the picture carry the rest.
+          caption: '`Ctrl+K` from the browser chrome — the palette over the page, with its four mode tabs.',
         },
         {
           kind: 'capability',
@@ -117,7 +141,13 @@ export const features: PageContent = {
             {
               state: 'available',
               items: [
-                '**Command palette** (`Ctrl+K`) with four modes: Chat, Do, Make, Tasks',
+                // Was: "**Command palette** (`Ctrl+K`) with four modes: Chat, Do, Make, Tasks".
+                // The four-mode half moved to In progress below; what remains here is what the
+                // palette actually does when you press the key. The command list is the literal
+                // one in `command-palette-host.tsx` — `tab.new`, `tab.reopen`, `tab.reload`,
+                // `app.settings` — and the filtering claim is `filterCommands` going through
+                // `foldForSearch`, the same fold the omnibox uses.
+                '**Command palette** (`Ctrl+K`) — opens over the page, filters as you type with the same Turkish-aware folding as the address bar, and runs browser commands: new tab, reopen closed tab, reload, settings',
                 '**Live agent console** — the page, the action, the observation, progress, token cost and errors, as they happen',
                 '**Editable plans** with each step tagged read / state-changing / destructive / financial',
                 {
@@ -170,6 +200,51 @@ export const features: PageContent = {
                 },
               ],
             },
+            // Downgraded out of Available, because the claim did not track the code.
+            //
+            // What stood here was "**Command palette** (`Ctrl+K`) with four modes: Chat, Do, Make,
+            // Tasks", listed beside shipped mechanisms. Read the way a capability list is meant to
+            // be read, that promises four working modes. Three of them hold nothing.
+            //
+            // The palette is presentational and takes its commands from a host. There is exactly one
+            // host — `apps/desktop/src/renderer/src/command-palette-host.tsx` — and its `sources`
+            // memo ends:
+            //
+            //     return { chat, do: [], make: [], tasks: [] };
+            //
+            // with the intent stated right above it: "Do / Make / Tasks are the agent's modes; they
+            // fill in as those surfaces expose commands. Shown as empty rather than hidden, because
+            // a mode that appears only sometimes is harder to learn than one that is visibly empty."
+            // That is a defensible product decision. It is not four modes.
+            //
+            // Nor does a typed goal fall through to the agent. Enter runs `runSelected` in
+            // `extensions/ext-agent/src/command-palette.tsx`, which opens with
+            // `const command = results[cursor]; if (command === undefined) return;` — so in an empty
+            // mode, or on a query nothing matches, Enter does nothing while the input still reads
+            // "Type a command or ask Tepegöz…". Neither `command-palette.tsx` nor
+            // `command-palette-core.ts` has any free-text dispatch, and neither imports anything
+            // that could start a run.
+            //
+            // Worth recording why the existing e2e did not catch this, since "there is an e2e" is how
+            // a claim like this survives a review: `e2e/command-palette.spec.ts` asserts four mode
+            // TABS exist (`await expect(modes).toHaveCount(4)`) and that the default mode has at
+            // least one option. It never switches mode, so it never looks inside the other three.
+            //
+            // `in-progress` and not `planned`: the tabs exist and `Tab` really cycles them, so this
+            // is a half-built surface rather than an idea. And not `measurement-owed`, which is for
+            // code that landed and has not been measured — nothing here is unmeasured, it is unbuilt.
+            //
+            // The second line below is the same surface's other honest gap, already owned upstream:
+            // `phases/product/phase-1a-walking-skeleton-mvp.md` records "owed: Ctrl+K currently
+            // binds in the renderer, so it fires while the chrome has focus but not while a PAGE
+            // does."
+            {
+              state: 'in-progress',
+              items: [
+                "The palette's **Do, Make and Tasks modes**. All four tabs are there and `Tab` cycles them, but only the first carries commands today — the other three are deliberately shown empty rather than hidden, and typing a goal into the palette does not start an agent run. The agent console is what drives the agent",
+                '`Ctrl+K` **while a page has focus** — the shortcut binds in the browser chrome, so it opens the palette from the chrome and not from inside a page',
+              ],
+            },
             {
               state: 'planned',
               items: [
@@ -193,11 +268,10 @@ export const features: PageContent = {
       blocks: [
         {
           kind: 'figure',
-          src: '/screenshots/providers.png',
+          asset: 'providers',
+          describes: 'ddb73325',
           alt: 'Settings, Providers and API keys: a provider dropdown, a label field and an API key field, with a note that keys are encrypted on the device.',
           caption: 'Your key, your machine: "encrypted on this device (OS keychain) and never leave it without your action."',
-          width: 1440,
-          height: 900,
         },
         {
           kind: 'capability',
@@ -289,11 +363,10 @@ export const features: PageContent = {
       blocks: [
         {
           kind: 'figure',
-          src: '/screenshots/network-privacy.png',
+          asset: 'network-privacy',
+          describes: '1c9215dd',
           alt: 'Settings, Network privacy: a connection form offering WireGuard, Tor or SOCKS5, a default route selector, and notices that Tepegöz does not ship the tunnel binaries.',
           caption: 'WireGuard, Tor or a SOCKS5 endpoint you already run — and it says plainly that it ships neither binary.',
-          width: 1440,
-          height: 900,
         },
         {
           kind: 'capability',
@@ -337,11 +410,10 @@ export const features: PageContent = {
       blocks: [
         {
           kind: 'figure',
-          src: '/screenshots/extensions.png',
+          asset: 'extensions',
+          describes: '5ac8ba2d',
           alt: 'The extensions page: nine first-party extension cards, each enabled, with names and descriptions.',
           caption: 'All nine, first-party, enabled by default — and each one removable.',
-          width: 1440,
-          height: 900,
         },
         {
           kind: 'capability',

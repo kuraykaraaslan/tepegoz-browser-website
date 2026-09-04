@@ -3,6 +3,7 @@ import { REPO_FILES, SITE } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/legal-license.md (status: ready)
+ * @sourceSha256 3ce1a24c (2026-08-23)
  *
  * The source's meta description is 157 characters, two over the ≤155 limit its
  * own README sets. Trimmed here to "the components it ships with"; the upstream

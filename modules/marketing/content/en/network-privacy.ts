@@ -3,6 +3,7 @@ import { REPO_FILES } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/network-privacy.md (status: needs-assets)
+ * @sourceSha256 a2055e58 (2026-08-23)
  *
  * Build note from the source, carried forward: this page needs one diagram —
  * three tabs, three different exits, one chained through Tor over VPN, one

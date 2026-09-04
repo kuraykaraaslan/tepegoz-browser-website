@@ -2,6 +2,7 @@ import type { PageContent } from '@/types/content';
 
 /**
  * Source: tepegoz-browser/docs/website/legal-privacy-policy.md
+ * @sourceSha256 9ddf136a (2026-08-23)
  * (status: draft-legal — DRAFT, NOT LEGAL ADVICE, DO NOT RELY ON AS-IS)
  *
  * The `draft-legal` status renders a banner and marks this page `noindex`; the

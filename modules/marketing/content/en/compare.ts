@@ -3,6 +3,7 @@ import { REPO_FILES } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/compare.md (status: ready)
+ * @sourceSha256 ea823638 (2026-09-02)
  *
  * Rule from the source that outranks the page's persuasiveness: no
  * completion-rate or success-rate comparison until the pre-registered

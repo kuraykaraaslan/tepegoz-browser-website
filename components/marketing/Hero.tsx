@@ -4,8 +4,10 @@ import { faArrowRight, faCircleHalfStroke } from '@fortawesome/free-solid-svg-ic
 import { CtaRow } from './CtaRow';
 import { Container } from './Section';
 import { renderRichText } from './RichText';
+import { MotionFigure } from './MotionFigure';
+import { MEDIA } from '@/modules/marketing/media/manifest.generated';
 import { cn } from '@/libs/utils/cn';
-import type { Hero as HeroData } from '@/types/content';
+import type { Hero as HeroData, HeroMedia } from '@/types/content';
 
 /**
  * Page hero.
@@ -75,31 +77,60 @@ export function Hero({ hero }: { hero: HeroData }) {
         </div>
 
         {hero.media && (
-          <figure className="mt-12 lg:mt-0">
-            {/* A light-themed desktop app on a dark site: the shot keeps its own
-                light plate in both themes rather than being inverted. */}
-            <div className="overflow-hidden rounded-2xl border border-border bg-[#F4F7FA] p-2 shadow-sm sm:p-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={hero.media.src}
-                alt={hero.media.alt}
-                width={hero.media.width}
-                height={hero.media.height}
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                className="block h-auto w-full rounded-xl border border-black/10"
-              />
-            </div>
-            {hero.media.caption && (
-              <figcaption className="mt-3 text-sm leading-relaxed text-text-secondary">
-                {renderRichText(hero.media.caption, 'hero-media')}
-              </figcaption>
-            )}
-          </figure>
+          <div className="mt-12 lg:mt-0">
+            <HeroMediaFigure media={hero.media} />
+          </div>
         )}
         </div>
       </Container>
     </section>
+  );
+}
+
+/**
+ * The hero's product shot — a still, or a recording.
+ *
+ * A still is eager and high priority: it is above the fold on most screens, and
+ * lazy-loading the largest element in the viewport is how a hero ends up
+ * shifting after paint.
+ *
+ * A recording gets the opposite treatment, and the inversion is the point. The
+ * home page's hero was a 24-second GIF that started looping the moment the page
+ * painted, with no pause, no stop and nothing `prefers-reduced-motion` could
+ * reach — the site's most prominent element was also its one live WCAG 2.2.2
+ * failure. `MotionFigure` loads the animated bytes only when someone asks for
+ * them, so the hero now paints a still (or an honest labelled gap where a still
+ * has not been captured) and moves on request.
+ */
+function HeroMediaFigure({ media }: { media: HeroMedia }) {
+  if (media.kind === 'motion') {
+    return <MotionFigure block={media} idPrefix="hero" priority />;
+  }
+
+  const asset = MEDIA[media.asset];
+
+  return (
+    <figure>
+      {/* A light-themed desktop app on a dark site: the shot keeps its own
+          light plate in both themes rather than being inverted. */}
+      <div className="overflow-hidden rounded-2xl border border-border bg-[#F4F7FA] p-2 shadow-sm sm:p-3">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={asset.src}
+          alt={media.alt}
+          width={asset.width}
+          height={asset.height}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="block h-auto w-full rounded-xl border border-black/10"
+        />
+      </div>
+      {media.caption && (
+        <figcaption className="mt-3 text-sm leading-relaxed text-text-secondary">
+          {renderRichText(media.caption, 'hero-media')}
+        </figcaption>
+      )}
+    </figure>
   );
 }

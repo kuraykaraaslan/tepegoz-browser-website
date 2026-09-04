@@ -3,6 +3,7 @@ import { REPO_FILES } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/blog/the-screenshot-that-captured-the-wrong-screen.md
+ * @sourceSha256 46e411fd (2026-09-02)
  * (status: ready)
  *
  * The first published post, and the first written in first person — this is a

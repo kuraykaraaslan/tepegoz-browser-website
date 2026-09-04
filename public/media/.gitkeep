@@ -1,0 +1,6 @@
+Keeps this directory in git while it is empty.
+
+Motion assets (WebM recordings) land here; stills stay in ../screenshots/, whose
+six files are live public URLs and are deliberately not moved. Both directories
+are scanned by scripts/media-manifest.mjs — a file here with no ledger entry
+fails scripts/media-check.mjs.

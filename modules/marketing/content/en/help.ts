@@ -3,6 +3,7 @@ import { REPO_FILES } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/help.md (status: needs-assets)
+ * @sourceSha256 04e4ff69 (2026-08-23)
  *
  * Build note from the source, carried forward: this is the hub page. Each
  * numbered guide becomes its own child route once written; until then the
@@ -45,17 +46,37 @@ export const help: PageContent = {
             'Each guide becomes its own page as it is written, with screenshots from a real build. They are listed here so you can see the shape of the documentation before it is all in place.',
           ],
         },
+        // A scope judgement, written down because the light touch is the easy
+        // one to get wrong in either direction. These cards list guides that do
+        // not exist yet — the callout above says so, the tracks are listed and
+        // not linked, and the placeholder below says the screenshots are missing
+        // — so a topic line is a plan for our writing, not a capability claim of
+        // the kind /features makes. On that reading most of these lines needed
+        // nothing, and they got nothing.
+        //
+        // Two did more than name a subject. "Your first agent task — the command
+        // palette, the four modes" tells a reader where to begin, and beginning
+        // there does not work: `command-palette-host.tsx` ends its `sources`
+        // memo `return { chat, do: [], make: [], tasks: [] }`, and Enter on an
+        // empty mode returns before dispatching anything, so a goal typed into
+        // the palette starts no run. "The four modes — Chat, Do, Make and Tasks"
+        // promises a guide to a surface three quarters of which is unbuilt — and
+        // a guide we have not written yet is still a description of a product
+        // that exists now. Both lines now name the agent console, which is what
+        // drives the agent, and the palette keeps a topic that describes it as
+        // it is. A guide in progress may be a promise about our time. It may not
+        // be a promise about the product's behaviour.
         {
           kind: 'cards',
           columns: 2,
           items: [
             {
               title: 'First steps',
-              body: 'Install — building from source until a release exists · Add a model key — Anthropic, OpenAI, Gemini or Kimi, and where it is stored · Run entirely offline with a local model · Your first agent task — the command palette, the four modes, reading the plan.',
+              body: 'Install — building from source until a release exists · Add a model key — Anthropic, OpenAI, Gemini or Kimi, and where it is stored · Run entirely offline with a local model · Your first agent task — handing a goal to the agent console, and reading the plan that comes back.',
             },
             {
               title: 'The agent',
-              body: 'The four modes — Chat, Do, Make and Tasks · Reading the live console — steps, observations, cost, errors · Approvals — risk tiers, what stops and asks, and why some things never unlock · Macros · Scheduled tasks · Connecting MCP servers.',
+              body: 'Where a run starts — the agent console sidebar, and what the command palette does and does not do yet · Reading the live console — steps, observations, cost, errors · Approvals — risk tiers, what stops and asks, and why some things never unlock · Macros · Scheduled tasks · Connecting MCP servers.',
             },
             {
               title: 'Browser',
@@ -66,6 +87,27 @@ export const help: PageContent = {
               body: 'Per-tab VPN and Tor — importing a configuration, binding a tab or a group · When a tunnel drops — what the kill switch does and what you will see · Where your data lives — the profile directory, what you can export, what a backup misses.',
             },
           ],
+        },
+        // Option (a): help.md's build note ends "Guides need screenshots taken
+        // from a real build", and none of them exist. That is an unmet asset
+        // requirement, so the page states it rather than only carrying a
+        // `needs-assets` flag a visitor never sees.
+        //
+        // `assetPlaceholder`, not a `gallery`: a gallery addresses its shots by
+        // ledger key, and these have no keys — they are not in the media ledger
+        // and will not be until a capture session produces them. A gallery with
+        // `expected: 15` and nothing to key would be a count with nothing
+        // underneath it.
+        //
+        // The callout above already tells the reader the guides are being
+        // written; this says the specific thing that is missing and why the
+        // guides cannot ship without it. The two are not redundant — one is
+        // about the prose, the other is about the pictures, and the pictures are
+        // what a walkthrough is mostly made of.
+        {
+          kind: 'assetPlaceholder',
+          label: 'Step-by-step screenshots for each guide, taken from a running build',
+          note: 'A walkthrough is mostly its pictures: which panel, which field, what it looks like when it has worked. Every shot here comes out of a real build rather than a drawing of one, and each guide goes live when its own are captured — which is why the tracks above are listed and not yet linked.',
         },
       ],
     },

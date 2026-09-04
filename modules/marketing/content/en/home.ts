@@ -1,7 +1,7 @@
 import type { PageContent } from '@/types/content';
 import { SITE } from '@/libs/config/site';
 
-/** Source: tepegoz-browser/docs/website/home.md (status: needs-assets) */
+/** Source: tepegoz-browser/docs/website/home.md (status: needs-assets) @sourceSha256 66bec140 (2026-08-23) */
 export const home: PageContent = {
   route: '/',
   title: 'Tepegöz — the browser that does the work',
@@ -17,16 +17,42 @@ export const home: PageContent = {
       { label: 'Get Tepegöz', href: '/download', variant: 'primary' },
       { label: 'See how it works', href: '/how-it-works', variant: 'outline' },
     ],
-    // The command palette rather than a finished task: the hero can show what
-    // the product IS without implying a result it has not demonstrated. The
-    // recording of the agent actually working is still owed — see the demo
-    // section below, which keeps saying so.
+    // This is a real agent run, not the command palette: the recording shows a
+    // question asked about the page on screen, the plan stated before anything
+    // happens, the policy kernel's verdict on each of the two tool calls, and
+    // the agent arriving at an answer. So the hero shows the product working
+    // rather than merely sitting there.
+    //
+    // It does NOT discharge home.md's standing requirement for a chaptered
+    // recording that shows a confirmation gate and a failure recovery. This run
+    // is in Fully autonomous mode, where by design no gate fires — there is
+    // nothing here for a gate chapter to point at, and nothing fails. That
+    // capture is still owed; the demo section below keeps saying so.
+    //
+    // `motion`, not `figure`, and that is not a formatting choice: the file is a
+    // 24-second GIF that loops forever. As a plain <img> above the fold it was a
+    // live WCAG 2.2.2 failure with no pause and nothing reachable by
+    // prefers-reduced-motion. The motion receiver holds the animated bytes back
+    // until someone presses play.
+    //
+    // The dimensions that used to sit here are gone: they read 1440x900 over a
+    // 1066x864 file — a layout shift on the largest element above the fold, in
+    // the one place the site's own rules forbid one. They now come from
+    // MEDIA['agent-demo'], measured from the bytes. `describes` is the
+    // acknowledgement that the alt text below was read against those same bytes.
     media: {
-      src: '/screenshots/agent-demo.gif',
-      alt: 'The Tepegöz window showing its extensions page: nine first-party extension cards, each with a name, a description and an enable toggle.',
-      caption: 'A real capture of the running application — the nine extensions it ships with.',
-      width: 1440,
-      height: 900,
+      kind: 'motion',
+      asset: 'agent-demo',
+      describes: '8279fff8',
+      alt: 'A screen recording of Tepegöz working. The user asks the agent how many times the letter "t" appears on the page currently open. The agent reasons in the open: it plans, states each step before taking it, and explains why — to count a letter it must first read the page, then evaluate a script over the text it retrieved. Each step carries its own verdict line — the tool it called, then the decision on it: the page read is marked allowed, and the script evaluation allowed and journaled — so the policy decision that permitted a step sits on screen beside it. Both steps complete with a tick, the agent answers 411, and it reports what the work cost in tokens. A banner states the run is fully autonomous and can be reviewed in the timeline.',
+      caption:
+        'A real capture of the running application: the agent answering a question about the page it is on — its plan, the policy verdict on each step, the answer, and what it cost, all visible.',
+      // The recording's LAST frame, not its first. It shows the run finished:
+      // both steps ticked, both verdicts recorded, the answer rendered. A poster
+      // of frame 0 would show an idle window and undersell what pressing play
+      // gets you. It is a ledger asset with its own stamp because a poster makes
+      // the same claim about the recording that alt text does.
+      poster: { asset: 'agent-demo-poster', describes: '9255fba3' },
     },
     statusNote: {
       body: '**Pre-release.** Builds are signed and downloadable, but this is early software: there has been no independent security audit, and the automation has not been independently benchmarked.',
@@ -86,9 +112,17 @@ export const home: PageContent = {
         {
           kind: 'steps',
           items: [
+            // Corrected: this step said "Press `Ctrl+K` and describe the goal", which instructs the
+            // reader to do something that does nothing. The palette's only host,
+            // `apps/desktop/src/renderer/src/command-palette-host.tsx`, ends its `sources` memo with
+            // `return { chat, do: [], make: [], tasks: [] };`, and Enter in
+            // `extensions/ext-agent/src/command-palette.tsx` returns early when no command matches —
+            // there is no free-text dispatch. The run in the recording above is started the way this
+            // step now describes: the Agent Console composer, `extensions/ext-agent/src/panel-actions.ts`
+            // `onRun()` → `api.runAgent(…)`. /how-it-works carries the same correction in full.
             {
               title: 'Ask in plain language.',
-              body: 'Press `Ctrl+K` and describe the goal — in English or Turkish.',
+              body: 'Open the **Agent Console** — the Agent panel in the toolbar — and describe the goal in the box at the bottom, in English or Turkish.',
             },
             {
               title: 'See the plan before it runs.',
@@ -103,6 +137,30 @@ export const home: PageContent = {
               body: 'Anything irreversible stops and asks. You can interrupt at any step, and the whole run is replayable afterwards.',
             },
           ],
+        },
+        // Option (a): the ask is real and unmet, so the page states it.
+        //
+        // This section is the one home.md attaches an asset requirement to, and
+        // the requirement is specific: a chaptered recording of a task on a real
+        // site that shows a confirmation gate firing and shows the agent
+        // recovering from something going wrong. The four steps above *describe*
+        // both; describing them is what every product site does.
+        //
+        // The hero recording does not discharge it, and the reason is
+        // mechanical rather than a matter of taste: that run is in Fully
+        // autonomous mode, where by design no gate fires. There is nothing in
+        // those 76 frames for a gate chapter to point at, and nothing in them
+        // fails. Reading the hero as "the demo landed" would quietly retire an
+        // unmet requirement on the strength of an asset that cannot satisfy it —
+        // which is exactly the substitution this slot exists to refuse.
+        //
+        // `assetPlaceholder` rather than a `gallery`, because this is one
+        // indivisible capture. There is no partial state to represent: a
+        // recording that shows the plan but no gate is not "half" of this.
+        {
+          kind: 'assetPlaceholder',
+          label: 'A chaptered recording: a confirmation gate firing, and a recovery from failure',
+          note: 'The recording at the top of this page is a real run, but it is a fully autonomous one — the mode in which, by design, nothing stops to ask. What is still owed is a longer capture of a task on a real site, chaptered against the four steps above: the plan before it runs, an irreversible step stopping for a decision, and the agent carrying on after something breaks. The clean run is the easier one to record and the less honest one to show, so this stays until the harder one exists.',
         },
       ],
     },

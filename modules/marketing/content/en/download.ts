@@ -3,6 +3,7 @@ import { REPO_FILES, SITE } from '@/libs/config/site';
 
 /**
  * Source: tepegoz-browser/docs/website/download.md (status: ready)
+ * @sourceSha256 369699c2 (2026-08-23)
  *
  * The source described two states. **State B is now live**: the first signed
  * release has shipped, so platform downloads lead and build-from-source moved
