@@ -77,11 +77,26 @@ const SOURCES = [
     dir: '.recording',
     tool: 'tepegoz-browser/scripts/record-agent.mjs',
     stripOrdinal: false,
+    // The publication ban that used to sit here is LIFTED, and the replacement is
+    // not "no warning" — it is the caveat that actually applies now.
+    //
+    // The ban said the recording showed the application sitting there rather than
+    // the agent working, because the script typed into the command palette's `Do`
+    // mode, where `do: []` means nothing dispatches. That was true and is fixed:
+    // the task now goes through the Agent Console composer, the surface that
+    // creates the turn the console's transcript binds its events to. A capture
+    // from the current script is a real run.
+    //
+    // What remains true, and must reach any caption built on these bytes: there
+    // was no person at the keyboard. The approval gates were answered by the
+    // harness clicking the product's own buttons, which is why the exported trace
+    // stamps each one `answeredByHarness`.
     warning:
-      'record-agent.mjs output is under a publication ban. It drives the command\n' +
-      '  palette\'s `Do` mode, which has no commands to dispatch, so the recording shows\n' +
-      '  the application sitting there — not the agent working. Do not caption one of\n' +
-      '  these as an agent run. (The ban is documented in that script\'s own header.)',
+      'This is a real agent run — but NOT unattended and NOT human-reviewed.\n' +
+      '  The approval gates were answered by the capture harness clicking the\n' +
+      '  product\'s own Approve / Run plan buttons after a readable pause. A\n' +
+      '  caption must not imply a person reviewed them; the exported trace\n' +
+      '  records each one under `answeredByHarness`.',
   },
 ];
 

@@ -278,6 +278,13 @@ function block(value: Block, locale: Locale, where: string): Block {
       return motion(value, locale, where);
     case 'gallery':
       return gallery(value, locale, where);
+    /* Only `caption` is rewritten. `label` is a short accessible name with
+       nowhere to put a link, and the run's own `message`/`detail` are not in the
+       block at all — they live in the generated module and reach the renderer
+       directly, because a product string must never pass through the locale
+       rewriter. */
+    case 'journalReplay':
+      return value.caption ? { ...value, caption: richText(value.caption, locale) } : value;
     case 'code':
     case 'assetPlaceholder':
       return value;

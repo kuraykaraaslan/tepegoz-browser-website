@@ -16,7 +16,9 @@ import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { renderRichText } from './RichText';
 import { CtaRow } from './CtaRow';
 import { MotionFigure } from './MotionFigure';
+import { JournalReplay } from './JournalReplay';
 import { MEDIA } from '@/modules/marketing/media/manifest.generated';
+import { TRACES } from '@/modules/marketing/traces';
 import type { Block, CalloutBlock, CapabilityState, GalleryBlock, Item } from '@/types/content';
 import { cn } from '@/libs/utils/cn';
 
@@ -438,6 +440,12 @@ export function BlockRenderer({ block, idPrefix }: { block: Block; idPrefix: str
 
     case 'gallery':
       return <Gallery block={block} idPrefix={idPrefix} />;
+
+    /* The trace is looked up HERE, in the server component, exactly as
+       `MEDIA[block.asset]` is above: the client island receives already-parsed,
+       serialisable data and performs no lookup and no parsing of its own. */
+    case 'journalReplay':
+      return <JournalReplay block={block} trace={TRACES[block.trace]} idPrefix={idPrefix} />;
 
     case 'code':
       return (

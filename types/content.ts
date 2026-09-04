@@ -1,5 +1,6 @@
 import type { RouteKey } from '@/libs/config/site';
 import type { ImageKey, MotionKey } from '@/modules/marketing/media/manifest.generated';
+import type { TraceKey } from '@/modules/marketing/traces';
 
 /**
  * The page content model.
@@ -243,6 +244,44 @@ export type GalleryBlock = {
   pendingNote?: string;
 };
 
+/**
+ * A recorded agent run, replayed in the DOM.
+ *
+ * The site's other media shows what the product LOOKS like. This shows what it
+ * DECIDED — the plan it proposed, the tools it called, the step that failed, and
+ * the gates the security kernel stopped at — from the product's own event
+ * stream, replayed as text a reader can scrub, pause and copy.
+ *
+ * The block carries only the two things a machine cannot know: which run, and
+ * what the page wants to say about it. Every fact about the run itself comes
+ * from `TRACES[trace]`, generated from the product repo and stamped against it,
+ * exactly as `MEDIA[asset]` owns every fact about an image.
+ *
+ * ## Why there is no `describes` stamp here
+ *
+ * A stamp binds an image's bytes to the sentence written about it, because
+ * nobody can tell from the alt text whether the picture still matches. A trace
+ * has no such gap: the block makes no claim about the run's contents at all, and
+ * the run's own integrity is its module's `@sourceSha256`.
+ *
+ * The field is also named `trace` rather than `asset` for a mechanical reason
+ * worth knowing before renaming it: `scripts/media-restamp.mjs` scans every
+ * content module for a `describes:` field and then demands an `asset:` sibling
+ * that resolves in the media ledger. A block reusing those two names would fail
+ * `npm run check` with an error about a missing image.
+ */
+export type JournalReplayBlock = {
+  kind: 'journalReplay';
+  /** Key into the trace registry. A run that does not exist is a compile error. */
+  trace: TraceKey;
+  /**
+   * Accessible name for the replay region — what a screen-reader user hears
+   * before they enter it. Not a heading; the section already has one.
+   */
+  label: string;
+  caption?: RichText;
+};
+
 export type CodeBlock = {
   kind: 'code';
   language?: string;
@@ -279,6 +318,7 @@ export type Block =
   | FigureBlock
   | MotionBlock
   | GalleryBlock
+  | JournalReplayBlock
   | CtasBlock
   | AssetPlaceholderBlock;
 

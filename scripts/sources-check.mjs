@@ -72,7 +72,15 @@ const CHECKOUT_MARKER = join('docs', 'website', 'README.md');
  * a `\r`, not just before the `\n`: swallowing the carriage return would leave
  * a lone CR behind the inserted line and turn a CRLF file into a mixed one.
  */
-const SOURCE_RE = /^([^\S\n]*)(?:\/\*\*|\*)?[^\S\n]*Source:[^\S\n]*tepegoz-browser\/(\S+\.md)[^\r\n]*/m;
+/*
+ * `.md` OR `.json`: the mechanism was built for transcribed prose, but a
+ * generated data module can be built from structured data just as well, and a
+ * recorded agent run is exactly that (`modules/marketing/traces/`). Widening the
+ * extension is what keeps such a module *stamped* — without it `readProvenance`
+ * returns null, the module counts as "unstamped", and the drift check that is
+ * the whole point of this file silently does not apply to it.
+ */
+const SOURCE_RE = /^([^\S\n]*)(?:\/\*\*|\*)?[^\S\n]*Source:[^\S\n]*tepegoz-browser\/(\S+\.(?:md|json))[^\r\n]*/m;
 
 /** `@sourceSha256 <8 hex> (<yyyy-mm-dd>)` — the date is a hint, the hash is the claim. */
 const STAMP_RE = /@sourceSha256\s+([0-9a-f]{8})(?:\s*\((\d{4}-\d{2}-\d{2})\))?/;

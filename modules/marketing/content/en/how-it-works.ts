@@ -104,6 +104,22 @@ export const howItWorks: PageContent = {
     },
 
     {
+      id: 'a-real-run',
+      eyebrow: 'A real run',
+      heading: 'Read one, line by line.',
+      lede: 'Everything above is a description. This is a run that happened: a search on a live site, a thread opened on another, two stops for approval, and a step that failed and was recovered from. It is the browser’s own event journal, replayed — not a re-enactment, and not a video you have to take on trust. It is also a **different, longer run** than the recording on the home page: reading a record costs you a glance, watching one costs you its full length, so the two were chosen for different jobs rather than forced to be the same capture.',
+      blocks: [
+        {
+          kind: 'journalReplay',
+          trace: 'reddit-electron-memory',
+          label: 'Replay of a recorded agent run',
+          caption:
+            'This run stops twice, for two different reasons — once because the address it was about to open came from text it had read rather than from the person who set the task, and once because the step would change stored state. Both are the kernel’s classification of the call, made before the model was consulted. One step also fails here and the agent reaches the same answer another way. See [what is still unproven](/roadmap).',
+        },
+      ],
+    },
+
+    {
       id: 'models',
       eyebrow: 'Models',
       heading: 'Bring your own model.',

@@ -17,42 +17,53 @@ export const home: PageContent = {
       { label: 'Get Tepegöz', href: '/download', variant: 'primary' },
       { label: 'See how it works', href: '/how-it-works', variant: 'outline' },
     ],
-    // This is a real agent run, not the command palette: the recording shows a
-    // question asked about the page on screen, the plan stated before anything
-    // happens, the policy kernel's verdict on each of the two tool calls, and
-    // the agent arriving at an answer. So the hero shows the product working
-    // rather than merely sitting there.
+    // A real run, in one take, on live third-party sites — and the recording
+    // home.md has been asking for since this page was written.
     //
-    // It does NOT discharge home.md's standing requirement for a chaptered
-    // recording that shows a confirmation gate and a failure recovery. This run
-    // is in Fully autonomous mode, where by design no gate fires — there is
-    // nothing here for a gate chapter to point at, and nothing fails. That
-    // capture is still owed; the demo section below keeps saying so.
+    // FIFTY-EIGHT SECONDS, and the length is the second decision here. The first
+    // capture of this task ran to 152s because it also asked for the thread's
+    // comment count: Reddit served a JS challenge screen, the agent correctly
+    // refused to trust what it had read, and it spent four more tool calls
+    // cross-checking a number nobody came to see. Cutting the clause cut the
+    // run, not the argument — the navigation still crosses an origin, so the
+    // kernel still stops to ask. Nothing was sped up and nothing was edited out;
+    // a shorter video here means a shorter run happened.
     //
-    // `motion`, not `figure`, and that is not a formatting choice: the file is a
-    // 24-second GIF that loops forever. As a plain <img> above the fold it was a
-    // live WCAG 2.2.2 failure with no pause and nothing reachable by
-    // prefers-reduced-motion. The motion receiver holds the animated bytes back
-    // until someone presses play.
+    // What this capture does NOT contain is a failed step. The 152s run had one
+    // and recovered from it, which is why that run is kept and replayed in full
+    // on /how-it-works. Neither the alt text nor the caption below claims a
+    // recovery, because this recording does not show one.
     //
-    // The dimensions that used to sit here are gone: they read 1440x900 over a
-    // 1066x864 file — a layout shift on the largest element above the fold, in
-    // the one place the site's own rules forbid one. They now come from
-    // MEDIA['agent-demo'], measured from the bytes. `describes` is the
-    // acknowledgement that the alt text below was read against those same bytes.
+    // `motion`, not `figure`: nothing above the fold may start moving on its own,
+    // so the receiver holds the bytes back until someone presses play and the
+    // poster is what paints. That also settles WCAG 2.2.2 without a pause button.
+    //
+    // `transcript` is present because this asset carries AUDIO — a narration
+    // track — and WCAG 1.2.1 wants a text alternative for spoken content. The
+    // lines below are that narration verbatim, not a summary of it.
+    //
+    // Dimensions are deliberately absent: they come from MEDIA['agent-run-narrated'],
+    // measured from the bytes. `describes` is the acknowledgement that the alt
+    // text was read against those same bytes.
     media: {
       kind: 'motion',
-      asset: 'agent-demo',
-      describes: '8279fff8',
-      alt: 'A screen recording of Tepegöz working. The user asks the agent how many times the letter "t" appears on the page currently open. The agent reasons in the open: it plans, states each step before taking it, and explains why — to count a letter it must first read the page, then evaluate a script over the text it retrieved. Each step carries its own verdict line — the tool it called, then the decision on it: the page read is marked allowed, and the script evaluation allowed and journaled — so the policy decision that permitted a step sits on screen beside it. Both steps complete with a tick, the agent answers 411, and it reports what the work cost in tokens. A banner states the run is fully autonomous and can be reviewed in the timeline.',
+      asset: 'agent-run-narrated',
+      describes: '62b2edba',
+      alt: 'A fifty-eight second screen recording of Tepegöz carrying out a task on live websites. The goal is typed into the Agent Console: find the reddit thread about Electron app memory usage and report its title. Before anything runs, a panel titled "Review the plan" lists seven steps, each naming the tool it will call and the reason for it, each with a checkbox. The browser searches on DuckDuckGo, and then stops: a panel headed "Approval required" says the agent wants to run a tool that changes state, gives the risk class as "Page change", names the tool browser_update_location, and warns that the values for the action were taken from page content the agent read, so a page could have planted them — that this is how prompt injection turns a read into an action. The reason is labelled tainted_side_effect and the panel offers Deny and Approve. Approved, the browser opens a real Reddit thread, checks that the page genuinely loaded rather than a challenge screen, and the console reports the thread title: "Is there a way to consistently keep my Electron app under 280MB memory?" in r/electronjs.',
       caption:
-        'A real capture of the running application: the agent answering a question about the page it is on — its plan, the policy verdict on each step, the answer, and what it cost, all visible.',
-      // The recording's LAST frame, not its first. It shows the run finished:
-      // both steps ticked, both verdicts recorded, the answer rendered. A poster
-      // of frame 0 would show an idle window and undersell what pressing play
-      // gets you. It is a ledger asset with its own stamp because a poster makes
-      // the same claim about the recording that alt text does.
-      poster: { asset: 'agent-demo-poster', describes: '9255fba3' },
+        'One take, on live sites, at `ask` autonomy — nothing sped up and nothing cut. It stops once, because the address it was about to open came from text it had read rather than from the person who set the task. The gates were answered by the capture harness, not by a person. A [longer run is replayed in full](/how-it-works#a-real-run) — a different capture, which also fails a step and recovers.',
+      transcript: [
+        'One take of a real run, on live websites. Nothing here is staged.',
+        'The task goes into the Agent Console, in plain language.',
+        'The plan comes first: every tool it means to call, and the reason for it. Uncheck a step and it never runs.',
+        'It searches, finds the thread, and stops before opening it.',
+        'That address came from text the agent read, not from the person who asked. The kernel calls that a tainted side effect, and will not act on it quietly.',
+        'Approved, it opens the page, checks what actually loaded, and answers. Your key, your machine, your rules.',
+      ],
+      // A frame from this recording, taken while the gate is open, so the still
+      // that paints before playback is the moment the product is actually about:
+      // an ordinary page on one side and the kernel asking permission on the other.
+      poster: { asset: 'agent-run-poster', describes: '99896c9c' },
     },
     statusNote: {
       body: '**Pre-release.** Builds are signed and downloadable, but this is early software: there has been no independent security audit, and the automation has not been independently benchmarked.',
