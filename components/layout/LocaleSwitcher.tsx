@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { LOCALES, LOCALE_LABELS, isLocale, localePath, type Locale } from '@/libs/i18n/locales';
 import { cn } from '@/libs/utils/cn';
+import { useT } from '@/libs/i18n/client';
 
 /**
  * Static-export language switcher.
@@ -21,6 +22,7 @@ import { cn } from '@/libs/utils/cn';
  */
 export function LocaleSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname();
+  const t = useT();
 
   if (LOCALES.length < 2) return null;
 
@@ -32,7 +34,7 @@ export function LocaleSwitcher({ locale }: { locale: Locale }) {
     <div
       className="flex items-center gap-1 rounded-md border border-border p-0.5"
       role="group"
-      aria-label="Language"
+      aria-label={t('marketing.locale.groupLabel', 'Language')}
     >
       {LOCALES.map((code) => {
         const active = code === locale;

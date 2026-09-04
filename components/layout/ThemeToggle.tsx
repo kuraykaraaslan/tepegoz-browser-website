@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faDisplay } from '@fortawesome/free-solid-svg-icons';
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { cn } from '@/libs/utils/cn';
+import { useT } from '@/libs/i18n/client';
 
 /**
  * Light / Dark / System toggle.
@@ -26,10 +27,10 @@ import { cn } from '@/libs/utils/cn';
 
 type Theme = 'light' | 'dark' | 'system';
 
-const OPTIONS: { value: Theme; label: string; icon: IconDefinition }[] = [
-  { value: 'light', label: 'Light', icon: faSun },
-  { value: 'dark', label: 'Dark', icon: faMoon },
-  { value: 'system', label: 'System', icon: faDisplay },
+const OPTIONS: { value: Theme; icon: IconDefinition }[] = [
+  { value: 'light', icon: faSun },
+  { value: 'dark', icon: faMoon },
+  { value: 'system', icon: faDisplay },
 ];
 
 const STORAGE_KEY = 'theme';
@@ -103,22 +104,36 @@ const serverSnapshot = (): Theme | null => null;
 
 export function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, read, serverSnapshot);
+  const t = useT();
+  /*
+   * Written out as three literal `t()` calls rather than mapped over OPTIONS.
+   * `scripts/i18n/extract.mjs` reads the English source out of a STRING LITERAL
+   * in the second argument, so `t(option.key, option.label)` would compile, run,
+   * and be invisible to the extractor — the keys would simply never reach
+   * `en.json`, and nothing would report it.
+   */
+  const labels: Record<Theme, string> = {
+    light: t('marketing.theme.light', 'Light'),
+    dark: t('marketing.theme.dark', 'Dark'),
+    system: t('marketing.theme.system', 'System'),
+  };
 
   return (
     <div
       className="flex items-center gap-0.5 rounded-md border border-border p-0.5"
       role="group"
-      aria-label="Colour theme"
+      aria-label={t('marketing.theme.groupLabel', 'Colour theme')}
     >
       {OPTIONS.map((option) => {
         const active = theme === option.value;
+        const label = labels[option.value];
         return (
           <button
             key={option.value}
             type="button"
             onClick={() => write(option.value)}
             aria-pressed={active}
-            title={option.label}
+            title={label}
             className={cn(
               'flex h-7 w-7 items-center justify-center rounded transition-colors',
               active
@@ -127,7 +142,7 @@ export function ThemeToggle() {
             )}
           >
             <FontAwesomeIcon icon={option.icon} className="h-3.5 w-3.5" aria-hidden="true" />
-            <span className="sr-only">{option.label}</span>
+            <span className="sr-only">{label}</span>
           </button>
         );
       })}

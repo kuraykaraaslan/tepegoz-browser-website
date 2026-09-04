@@ -19,8 +19,12 @@
     "media:ingest": "node scripts/media-ingest.mjs",
     "sources:check": "node scripts/sources-check.mjs",
     "known-issues:sync": "node scripts/known-issues-sync.mjs",
-    "check": "npm run kui:check && npm run media:check && npm run media:stamps && npm run content:check && npm run sources:check && npm run typecheck && npm run lint",
-    "icons": "node scripts/make-icons.mjs"
+    "check": "npm run kui:check && npm run media:check && npm run media:stamps && npm run content:check && npm run sources:check && npm run i18n:check && npm run routes:check && npm run typecheck && npm run lint",
+    "icons": "node scripts/make-icons.mjs",
+    "i18n:extract": "node scripts/i18n/extract.mjs",
+    "i18n:check": "node scripts/i18n/extract.mjs --check",
+    "routes:sync": "node scripts/localized-routes.mjs",
+    "routes:check": "node scripts/localized-routes.mjs --check"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
@@ -28,6 +32,7 @@
     "@fortawesome/free-regular-svg-icons": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
+    "@kuraykaraaslan/i18n": "file:vendor/i18n",
     "@kuraykaraaslan/kui-react": "file:vendor/kui-react",
     "chart.js": "^4.5.1",
     "clsx": "^2.1.1",

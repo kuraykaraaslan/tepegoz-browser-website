@@ -10,14 +10,18 @@
  * navigation, the sitemap, `hreflang` and the language switcher all follow it
  * without repeating the branch.
  *
- * Adding Turkish is therefore three steps and no routing work:
- *   1. add `'tr'` to LOCALES below,
- *   2. add `modules/marketing/content/tr/` mirroring `.../en/`,
- *   3. add `app/(localized)/[lang]/` — a sibling route group whose pages pass
- *      the `lang` param through to `getPage`, exactly as the root pages pass
- *      DEFAULT_LOCALE.
+ * Turkish is now open. Steps 1 and 3 of the note that used to sit here are done
+ * — `'tr'` is in LOCALES and `app/(localized)/[lang]/` mirrors the root pages —
+ * and step 2 is deliberately NOT: there is no `content/tr/` yet, so `getPage`
+ * falls back to the English page body per route. The site chrome IS translated,
+ * through `modules/marketing/dictionaries`, so `/tr/…` is a working Turkish
+ * shell around English copy rather than a dead link.
+ *
+ * That is a visible half-measure on purpose. The alternative was to hold the
+ * whole locale back until 3,000 lines of copy were translated, which is how a
+ * second language stays permanently "next quarter".
  */
-export const LOCALES = ['en'] as const;
+export const LOCALES = ['en', 'tr'] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -26,6 +30,9 @@ export const DEFAULT_LOCALE: Locale = 'en';
 
 export const LOCALE_LABELS: Record<Locale, { label: string; nativeName: string }> = {
   en: { label: 'EN', nativeName: 'English' },
+  // Endonym, deliberately: a language picker that says "Turkish" is written for
+  // someone who already reads English.
+  tr: { label: 'TR', nativeName: 'Türkçe' },
 };
 
 export function isLocale(value: string): value is Locale {

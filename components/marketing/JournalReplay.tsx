@@ -17,6 +17,7 @@ import { renderRichText } from './RichText';
 import type { JournalReplayBlock } from '@/types/content';
 import type { TraceDocument, TraceEvent, TraceEventKind } from '@/modules/marketing/traces/schema';
 import { cn } from '@/libs/utils/cn';
+import { useT } from '@/libs/i18n/client';
 
 /**
  * Replays one recorded agent run as text.
@@ -60,22 +61,28 @@ import { cn } from '@/libs/utils/cn';
  * mistake for absence.
  */
 
-const KIND_STYLE: Record<
-  TraceEventKind,
-  { label: string; tone: string; dot: string }
-> = {
-  plan: { label: 'plan', tone: 'text-secondary', dot: 'bg-secondary' },
-  decision: { label: 'decision', tone: 'text-text-secondary', dot: 'bg-border-strong' },
-  step_start: { label: 'step', tone: 'text-text-primary', dot: 'bg-primary/60' },
-  step_ok: { label: 'ok', tone: 'text-success', dot: 'bg-success' },
-  step_error: { label: 'failed', tone: 'text-error', dot: 'bg-error' },
-  awaiting_approval: { label: 'stopped to ask', tone: 'text-warning', dot: 'bg-warning' },
-  input_action: { label: 'input', tone: 'text-text-primary', dot: 'bg-primary/60' },
-  handoff: { label: 'handoff', tone: 'text-warning', dot: 'bg-warning' },
-  tab_spawn: { label: 'new tab', tone: 'text-text-secondary', dot: 'bg-border-strong' },
-  grant: { label: 'grant', tone: 'text-secondary', dot: 'bg-secondary' },
-  done: { label: 'done', tone: 'text-success', dot: 'bg-success' },
-  error: { label: 'error', tone: 'text-error', dot: 'bg-error' },
+/**
+ * How each kind is drawn. The WORD is not here.
+ *
+ * This map is module-level, where no hook can run, so a `label` field would
+ * either be untranslatable or force a `t(row.labelKey, row.label)` call whose
+ * arguments are variables — which compiles, renders, and is invisible to
+ * `scripts/i18n/extract.mjs`, so the keys would never reach `en.json`. The
+ * labels are literal `t()` calls inside the component instead.
+ */
+const KIND_STYLE: Record<TraceEventKind, { tone: string; dot: string }> = {
+  plan: { tone: 'text-secondary', dot: 'bg-secondary' },
+  decision: { tone: 'text-text-secondary', dot: 'bg-border-strong' },
+  step_start: { tone: 'text-text-primary', dot: 'bg-primary/60' },
+  step_ok: { tone: 'text-success', dot: 'bg-success' },
+  step_error: { tone: 'text-error', dot: 'bg-error' },
+  awaiting_approval: { tone: 'text-warning', dot: 'bg-warning' },
+  input_action: { tone: 'text-text-primary', dot: 'bg-primary/60' },
+  handoff: { tone: 'text-warning', dot: 'bg-warning' },
+  tab_spawn: { tone: 'text-text-secondary', dot: 'bg-border-strong' },
+  grant: { tone: 'text-secondary', dot: 'bg-secondary' },
+  done: { tone: 'text-success', dot: 'bg-success' },
+  error: { tone: 'text-error', dot: 'bg-error' },
 };
 
 /** One display row: an event, plus how many identical ones it stands for. */
@@ -141,8 +148,25 @@ export function JournalReplay({
   trace: TraceDocument;
   idPrefix: string;
 }): React.ReactElement {
+  const t = useT();
   const rows = useMemo(() => collapse(trace.events), [trace.events]);
   const reduced = usePrefersReducedMotion();
+
+  /* Literal calls, one per kind — see the note on KIND_STYLE. */
+  const kindLabel: Record<TraceEventKind, string> = {
+    plan: t('marketing.replay.kind.plan', 'plan'),
+    decision: t('marketing.replay.kind.decision', 'decision'),
+    step_start: t('marketing.replay.kind.stepStart', 'step'),
+    step_ok: t('marketing.replay.kind.stepOk', 'ok'),
+    step_error: t('marketing.replay.kind.stepError', 'failed'),
+    awaiting_approval: t('marketing.replay.kind.awaitingApproval', 'stopped to ask'),
+    input_action: t('marketing.replay.kind.inputAction', 'input'),
+    handoff: t('marketing.replay.kind.handoff', 'handoff'),
+    tab_spawn: t('marketing.replay.kind.tabSpawn', 'new tab'),
+    grant: t('marketing.replay.kind.grant', 'grant'),
+    done: t('marketing.replay.kind.done', 'done'),
+    error: t('marketing.replay.kind.error', 'error'),
+  };
 
   const [at, setAt] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -199,7 +223,11 @@ export function JournalReplay({
 
   const regionId = `${idPrefix}-replay`;
   const outcome =
-    trace.terminal === 'done' ? 'finished' : trace.terminal === 'error' ? 'failed' : 'timed out';
+    trace.terminal === 'done'
+      ? t('marketing.replay.outcome.finished', 'finished')
+      : trace.terminal === 'error'
+        ? t('marketing.replay.outcome.failed', 'failed')
+        : t('marketing.replay.outcome.timedOut', 'timed out');
 
   return (
     <section
@@ -214,38 +242,53 @@ export function JournalReplay({
           author this block without the reader being told what they are looking at. */}
       <div className="border-b border-border bg-surface-overlay px-4 py-3 text-sm sm:px-5">
         <p className="font-medium text-text-primary">
-          A recorded run, replayed from its exported event journal.
+          {t('marketing.replay.banner.what', 'A recorded run, replayed from its exported event journal.')}
         </p>
         <p className="mt-1 text-text-secondary">
-          Nothing here is live — no agent is running and this page never contacts one. It is also not a
-          mockup: every line below is an event the product&rsquo;s own journal wrote.
+          {t(
+            'marketing.replay.banner.notLive',
+            'Nothing here is live — no agent is running and this page never contacts one. It is also not a mockup: every line below is an event the product’s own journal wrote.',
+          )}
         </p>
         <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-[0.8125rem] text-text-secondary sm:grid-cols-4">
           <div>
-            <dt className="inline font-medium text-text-primary">Captured </dt>
+            <dt className="inline font-medium text-text-primary">{t('marketing.replay.meta.captured', 'Captured')} </dt>
             <dd className="inline tabular-nums">{trace.capturedOn}</dd>
           </div>
           <div>
-            <dt className="inline font-medium text-text-primary">Model </dt>
+            <dt className="inline font-medium text-text-primary">{t('marketing.replay.meta.model', 'Model')} </dt>
             <dd className="inline">{trace.provider}</dd>
           </div>
           <div>
-            <dt className="inline font-medium text-text-primary">Autonomy </dt>
+            <dt className="inline font-medium text-text-primary">{t('marketing.replay.meta.autonomy', 'Autonomy')} </dt>
             <dd className="inline">{trace.autonomy}</dd>
           </div>
           <div>
-            <dt className="inline font-medium text-text-primary">Outcome </dt>
+            <dt className="inline font-medium text-text-primary">{t('marketing.replay.meta.outcome', 'Outcome')} </dt>
             <dd className="inline">
-              {outcome} in {clock(trace.durationMs)}
+              {t('marketing.replay.meta.outcomeValue', '{{outcome}} in {{duration}}', {
+                outcome,
+                duration: clock(trace.durationMs),
+              })}
             </dd>
           </div>
         </dl>
         {trace.answeredByHarness.length > 0 && (
           <p className="mt-2 text-[0.8125rem] text-text-secondary">
             <FontAwesomeIcon icon={faHandPaper} className="mr-1.5 h-3 w-3" aria-hidden="true" />
-            No person was at the keyboard: {trace.answeredByHarness.length} gate
-            {trace.answeredByHarness.length === 1 ? ' was' : 's were'} answered by the capture harness,
-            by clicking the product&rsquo;s own buttons.
+            {/* One key per grammatical number rather than a stitched-together
+                sentence: English needs "gate was" / "gates were", and a language
+                that inflects differently gets a whole sentence to rewrite. */}
+            {trace.answeredByHarness.length === 1
+              ? t(
+                  'marketing.replay.harness.one',
+                  'No person was at the keyboard: 1 gate was answered by the capture harness, by clicking the product’s own buttons.',
+                )
+              : t(
+                  'marketing.replay.harness.many',
+                  'No person was at the keyboard: {{n}} gates were answered by the capture harness, by clicking the product’s own buttons.',
+                  { n: trace.answeredByHarness.length },
+                )}
           </p>
         )}
       </div>
@@ -253,7 +296,7 @@ export function JournalReplay({
       {/* The task, in the words it was given in. */}
       <div className="border-b border-border px-4 py-3 sm:px-5">
         <p className="text-[0.6875rem] font-semibold uppercase tracking-wider text-text-secondary">
-          The task
+          {t('marketing.replay.task.label', 'The task')}
         </p>
         <p className="mt-1 text-sm text-text-primary">{trace.task}</p>
         <p className="mt-1 font-mono text-[0.75rem] text-text-secondary">{trace.startUrl}</p>
@@ -263,7 +306,11 @@ export function JournalReplay({
       {trace.plans.length > 0 && trace.plans[0] && (
         <details className="border-b border-border px-4 py-3 sm:px-5">
           <summary className="cursor-pointer text-sm font-medium text-text-primary">
-            The plan it proposed — {trace.plans[0].steps.length} steps, each with its reason
+            {t(
+              'marketing.replay.plan.summary',
+              'The plan it proposed — {{n}} steps, each with its reason',
+              { n: trace.plans[0].steps.length },
+            )}
           </summary>
           <p className="mt-2 text-sm text-text-secondary">{trace.plans[0].goal}</p>
           <ol className="mt-3 space-y-2">
@@ -304,7 +351,13 @@ export function JournalReplay({
             className="h-3 w-3"
             aria-hidden="true"
           />
-          {finished ? 'Replay' : atGate ? 'Continue past the gate' : playing ? 'Pause' : 'Play'}
+          {finished
+            ? t('marketing.replay.control.replay', 'Replay')
+            : atGate
+              ? t('marketing.replay.control.continue', 'Continue past the gate')
+              : playing
+                ? t('marketing.replay.control.pause', 'Pause')
+                : t('marketing.replay.control.play', 'Play')}
         </button>
         <button
           type="button"
@@ -313,11 +366,11 @@ export function JournalReplay({
           className="inline-flex items-center gap-2 rounded-lg border border-border-strong px-3 py-1.5 text-sm text-text-primary transition-colors hover:bg-surface-overlay disabled:opacity-50"
         >
           <FontAwesomeIcon icon={faForwardStep} className="h-3 w-3" aria-hidden="true" />
-          Step
+          {t('marketing.replay.control.step', 'Step')}
         </button>
 
         <label className="flex flex-1 items-center gap-3 text-sm">
-          <span className="sr-only">Position in the run</span>
+          <span className="sr-only">{t('marketing.replay.control.position', 'Position in the run')}</span>
           <input
             type="range"
             min={0}
@@ -342,20 +395,20 @@ export function JournalReplay({
         <div className="border-b border-border bg-warning-subtle px-4 py-3 sm:px-5">
           <p className="flex items-center gap-2 text-sm font-semibold text-text-primary">
             <FontAwesomeIcon icon={faShieldHalved} className="h-3.5 w-3.5" aria-hidden="true" />
-            The run stopped here and asked
+            {t('marketing.replay.gate.title', 'The run stopped here and asked')}
           </p>
           <dl className="mt-2 space-y-1 text-sm">
             <div>
-              <dt className="inline font-medium text-text-primary">Tool </dt>
+              <dt className="inline font-medium text-text-primary">{t('marketing.replay.gate.tool', 'Tool')} </dt>
               <dd className="inline font-mono text-[0.8125rem]">{gate.toolName}</dd>
             </div>
             <div>
-              <dt className="inline font-medium text-text-primary">Why </dt>
+              <dt className="inline font-medium text-text-primary">{t('marketing.replay.gate.why', 'Why')} </dt>
               <dd className="inline font-mono text-[0.8125rem]">{gate.reason}</dd>
             </div>
             {gate.riskTier && (
               <div>
-                <dt className="inline font-medium text-text-primary">Risk class </dt>
+                <dt className="inline font-medium text-text-primary">{t('marketing.replay.gate.riskClass', 'Risk class')} </dt>
                 <dd className="inline font-mono text-[0.8125rem]">{gate.riskTier}</dd>
               </div>
             )}
@@ -364,8 +417,10 @@ export function JournalReplay({
             {gate.argsPreview}
           </p>
           <p className="mt-1 text-[0.75rem] text-text-secondary">
-            The product truncates this preview to 200 characters inside the privileged process, before
-            it reaches any window. It is not the whole argument.
+            {t(
+              'marketing.replay.gate.truncated',
+              'The product truncates this preview to 200 characters inside the privileged process, before it reaches any window. It is not the whole argument.',
+            )}
           </p>
         </div>
       )}
@@ -393,7 +448,7 @@ export function JournalReplay({
               <span className="min-w-0 flex-1">
                 <span className="flex flex-wrap items-baseline gap-2">
                   <span className={cn('text-[0.6875rem] font-semibold uppercase tracking-wide', style.tone)}>
-                    {style.label}
+                    {kindLabel[row.kind]}
                   </span>
                   {row.repeats > 1 && (
                     <span className="rounded bg-surface-sunken px-1.5 text-[0.6875rem] tabular-nums text-text-secondary">
@@ -433,8 +488,10 @@ export function JournalReplay({
       </p>
 
       <p className="border-t border-border px-4 py-2.5 text-[0.75rem] text-text-secondary sm:px-5">
-        Timestamps are the run&rsquo;s own. Playback pacing is compressed so long waits stay visibly
-        longer than short ones without costing you the wait.
+        {t(
+          'marketing.replay.pacing',
+          'Timestamps are the run’s own. Playback pacing is compressed so long waits stay visibly longer than short ones without costing you the wait.',
+        )}
       </p>
 
       {block.caption && (

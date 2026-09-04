@@ -28,9 +28,30 @@ import { EN_PAGES, EN_NAV_LABELS } from './en';
  * checked, because this is the one place every page passes through.
  */
 
+/**
+ * Page bodies per locale.
+ *
+ * `tr` deliberately points at the ENGLISH pages. There is no `content/tr/` yet,
+ * and this is the one place that fact is expressed — so a Turkish visitor gets a
+ * translated shell (header, footer, controls, language switcher, metadata) around
+ * an English body, rather than a 404 or a blank page.
+ *
+ * It is a visible half-measure, chosen over holding the whole locale back until
+ * 3,000 lines of copy are translated. `withLocale` still rewrites every internal
+ * link through `localePath`, so navigation stays inside `/tr/…` instead of
+ * quietly dumping the reader back into the English site on their first click.
+ *
+ * When `content/tr/` lands, this map is the only line that changes.
+ */
 const REGISTRY: Record<Locale, { pages: Record<RouteKey, PageContent>; nav: NavLabels }> = {
   en: { pages: EN_PAGES, nav: EN_NAV_LABELS },
+  tr: { pages: EN_PAGES, nav: EN_NAV_LABELS },
 };
+
+/** True while a locale is still served from another locale's copy. */
+export function isUntranslated(locale: Locale): boolean {
+  return locale !== 'en' && REGISTRY[locale].pages === EN_PAGES;
+}
 
 export function getNavLabels(locale: Locale): NavLabels {
   return REGISTRY[locale].nav;

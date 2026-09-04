@@ -9,6 +9,7 @@ import { MEDIA } from '@/modules/marketing/media/manifest.generated';
 import type { MediaAsset } from '@/modules/marketing/media/types';
 import type { Chapter, MotionBlock } from '@/types/content';
 import { cn } from '@/libs/utils/cn';
+import { useT, type TFunction } from '@/libs/i18n/client';
 
 /**
  * The site's video receiver — and the fix for the one accessibility failure the
@@ -76,15 +77,35 @@ import { cn } from '@/libs/utils/cn';
  * {@link sameShape} for what happens when the two disagree.
  */
 
-/** Spoken form for an accessible name — "24 seconds", "1 minute 12 seconds". */
-function spokenDuration(ms: number | null): string | null {
+/**
+ * Spoken form for an accessible name — "24 seconds", "1 minute 12 seconds".
+ *
+ * Takes `t` because this string is READ ALOUD, and it used to be assembled from
+ * English words and English plural rules in code. Under a Turkish header that
+ * produced "Kaydı oynat — 24 seconds": a translated sentence with an
+ * untranslated tail, which is the failure mode a dictionary is supposed to
+ * prevent and the easiest one to ship without noticing, because the fragment
+ * never appears in a `t()` call.
+ *
+ * The singular minute keeps its own key rather than being derived: English needs
+ * it and Turkish does not, and a language that agrees differently again gets a
+ * place to say so instead of a rule baked into this function.
+ */
+function spokenDuration(ms: number | null, t: TFunction): string | null {
   if (ms === null || ms <= 0) return null;
   const total = Math.round(ms / 1000);
-  if (total < 60) return `${total} seconds`;
+  if (total < 60) return t('marketing.motion.durationSeconds', '{{n}} seconds', { n: total });
   const minutes = Math.floor(total / 60);
   const seconds = total % 60;
-  const head = `${minutes} minute${minutes === 1 ? '' : 's'}`;
-  return seconds === 0 ? head : `${head} ${seconds} seconds`;
+  const head =
+    minutes === 1
+      ? t('marketing.motion.durationMinute', '1 minute')
+      : t('marketing.motion.durationMinutes', '{{n}} minutes', { n: minutes });
+  if (seconds === 0) return head;
+  return t('marketing.motion.durationJoin', '{{minutes}} {{seconds}}', {
+    minutes: head,
+    seconds: t('marketing.motion.durationSeconds', '{{n}} seconds', { n: seconds }),
+  });
 }
 
 /**
@@ -288,8 +309,14 @@ export function MotionFigure({
     return () => watch.current();
   }, []);
 
-  const duration = spokenDuration(asset.durationMs);
-  const playLabel = duration ? `Play the recording — ${duration}` : 'Play the recording';
+  const t = useT();
+  const duration = spokenDuration(asset.durationMs, t);
+  /* Two whole sentences rather than one with an optional tail: a translator
+     needs to move the duration inside the sentence, and some languages cannot
+     append it after an em dash and still read as a sentence. */
+  const playLabel = duration
+    ? t('marketing.motion.playWithDuration', 'Play the recording — {{duration}}', { duration })
+    : t('marketing.motion.play', 'Play the recording');
   /**
    * Continues the visible word rather than repeating it.
    *
@@ -435,7 +462,7 @@ export function MotionFigure({
         </div>
 
         {block.chapters && block.chapters.length > 0 && (
-          <nav aria-label="Chapters" className="mt-4">
+          <nav aria-label={t('marketing.motion.chapters', 'Chapters')} className="mt-4">
             <ol className="flex flex-wrap gap-2">
               {block.chapters.map((chapter, i) => (
                 <li key={i}>
@@ -584,7 +611,7 @@ export function MotionFigure({
         className={cn(CONTROL, 'absolute right-3 top-3')}
       >
         <FontAwesomeIcon icon={faStop} className="h-3.5 w-3.5" aria-hidden="true" />
-        Stop
+        {t('marketing.motion.stop', 'Stop')}
         {/* The accessible name has to change with the state, and "Stop" alone
             does not say what stopping leaves behind. */}
         <span className="sr-only">{stopSuffix}</span>
@@ -657,6 +684,8 @@ function PendingPoster({
   buttonRef: RefObject<HTMLButtonElement | null>;
   onPlay: () => void;
 }) {
+  const t = useT();
+
   return (
     <div
       className={cn(
@@ -669,7 +698,9 @@ function PendingPoster({
         <FontAwesomeIcon icon={faFilm} className="h-6 w-6 text-text-secondary" aria-hidden="true" />
         <div className="space-y-2">
           <Badge variant="warning" size="sm">
-            {reason === 'missing' ? 'Still frame pending' : 'Still frame not used'}
+            {reason === 'missing'
+              ? t('marketing.motion.posterPending', 'Still frame pending')
+              : t('marketing.motion.posterUnused', 'Still frame not used')}
           </Badge>
           <p className="mx-auto max-w-sm text-sm leading-relaxed text-text-secondary">
             {reason === 'missing'
@@ -700,12 +731,13 @@ function PendingPoster({
  * card look unlike all the others without making anything easier to identify.
  */
 function Transcript({ block, idPrefix }: { block: MotionBlock; idPrefix: string }) {
+  const t = useT();
   if (!block.transcript || block.transcript.length === 0) return null;
 
   return (
     <details className="mt-4 rounded-xl border border-border bg-surface-raised px-4 py-3">
       <summary className="cursor-pointer text-sm font-semibold text-text-primary">
-        Transcript
+        {t('marketing.motion.transcript', 'Transcript')}
       </summary>
       <div className="mt-3 space-y-2">
         {block.transcript.map((line, i) => (

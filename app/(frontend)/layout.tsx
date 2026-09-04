@@ -1,8 +1,12 @@
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
-import { DEFAULT_LOCALE } from '@/libs/i18n/locales';
+import { DEFAULT_LOCALE, LOCALES } from '@/libs/i18n/locales';
 import { getNavLabels } from '@/modules/marketing/content';
+import { getMessages } from '@kuraykaraaslan/i18n/server/messages';
+import { I18nProvider } from '@/libs/i18n/client';
+import { serverT } from '@/libs/i18n/server-t';
+import { dictionaries } from '@/modules/marketing/dictionaries';
 
 /* Self-hosted at build time by next/font, so the page makes no request to
    Google at runtime — the site ships zero third-party requests by design. */
@@ -38,6 +42,14 @@ const themeBootstrap = `(function(){try{var t=localStorage.getItem('theme');var 
  */
 export default function DefaultLocaleLayout({ children }: { children: React.ReactNode }) {
   const labels = getNavLabels(DEFAULT_LOCALE);
+  const t = serverT(DEFAULT_LOCALE);
+  /*
+   * The active-locale bundle is resolved on the server and handed to the client
+   * provider as a prop — the shape next-boilerplate's RSC layout uses. Nothing
+   * ships the whole multi-locale dictionary to the browser, and the client
+   * runtime never fetches: this is a static export with `connect-src 'self'`.
+   */
+  const messages = getMessages(dictionaries, DEFAULT_LOCALE, DEFAULT_LOCALE);
 
   return (
     <html
@@ -53,16 +65,18 @@ export default function DefaultLocaleLayout({ children }: { children: React.Reac
           href="#main-content"
           className="sr-only rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-fg focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50"
         >
-          Skip to content
+          {t('marketing.a11y.skipToContent', 'Skip to content')}
         </a>
 
-        <SiteHeader locale={DEFAULT_LOCALE} labels={labels} />
+        <I18nProvider locale={DEFAULT_LOCALE} messages={messages} languages={[...LOCALES]}>
+          <SiteHeader locale={DEFAULT_LOCALE} labels={labels} />
 
-        <main id="main-content" className="flex-1">
-          {children}
-        </main>
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
 
-        <SiteFooter locale={DEFAULT_LOCALE} labels={labels} />
+          <SiteFooter locale={DEFAULT_LOCALE} labels={labels} />
+        </I18nProvider>
       </body>
     </html>
   );

@@ -5,9 +5,23 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons';
 import { BrandLockup } from '@/components/brand/BrandLockup';
 import { FOOTER_NAV, ROUTES, SITE } from '@/libs/config/site';
 import { localePath, type Locale } from '@/libs/i18n/locales';
+import { serverT } from '@/libs/i18n/server-t';
 import type { NavLabels } from '@/types/content';
 
 export function SiteFooter({ locale, labels }: { locale: Locale; labels: NavLabels }) {
+  const t = serverT(locale);
+  /*
+   * Literal `t()` calls, keyed by the group id. `scripts/i18n/extract.mjs` reads
+   * the English source from a string literal in the second argument, so a loop
+   * over the ids would compile and render but never reach `en.json`.
+   */
+  const groupHeading: Record<(typeof FOOTER_NAV)[number]['id'], string> = {
+    product: t('marketing.footer.product', 'Product'),
+    trust: t('marketing.footer.trust', 'Trust'),
+    project: t('marketing.footer.project', 'Project'),
+    legal: t('marketing.footer.legal', 'Legal'),
+  };
+
   return (
     <footer className="border-t border-border bg-surface-raised">
       <div className="mx-auto w-full max-w-5xl px-5 py-14 sm:px-6 lg:px-8">
@@ -28,9 +42,9 @@ export function SiteFooter({ locale, labels }: { locale: Locale; labels: NavLabe
           </div>
 
           {FOOTER_NAV.map((group) => (
-            <nav key={group.heading} aria-label={group.heading}>
+            <nav key={group.id} aria-label={groupHeading[group.id]}>
               <h2 className="font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-text-secondary">
-                {group.heading}
+                {groupHeading[group.id]}
               </h2>
               <ul className="mt-3.5 space-y-2.5">
                 {group.items.map((key) => (

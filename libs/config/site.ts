@@ -110,9 +110,18 @@ export const PRIMARY_NAV: readonly RouteKey[] = [
   'compare',
 ];
 
-export const FOOTER_NAV: readonly { heading: string; items: readonly RouteKey[] }[] = [
-  { heading: 'Product', items: ['howItWorks', 'features', 'extensions', 'networkPrivacy', 'download'] },
-  { heading: 'Trust', items: ['security', 'privacy', 'openSource', 'compare'] },
-  { heading: 'Project', items: ['story', 'roadmap', 'turkey', 'blog', 'releases'] },
-  { heading: 'Legal', items: ['help', 'legalPrivacy', 'legalTerms', 'legalLicense'] },
+/**
+ * Footer groups carry an `id`, not a heading.
+ *
+ * This file "only holds chrome: names, routes, and links" — and a heading is
+ * copy, which means it has to translate. Keeping the English word here would
+ * either strand it untranslated or force the dictionary key to be derived from a
+ * display string, which breaks the moment the wording changes. The id is stable
+ * data; `SiteFooter` turns it into a translated heading.
+ */
+export const FOOTER_NAV: readonly { id: 'product' | 'trust' | 'project' | 'legal'; items: readonly RouteKey[] }[] = [
+  { id: 'product', items: ['howItWorks', 'features', 'extensions', 'networkPrivacy', 'download'] },
+  { id: 'trust', items: ['security', 'privacy', 'openSource', 'compare'] },
+  { id: 'project', items: ['story', 'roadmap', 'turkey', 'blog', 'releases'] },
+  { id: 'legal', items: ['help', 'legalPrivacy', 'legalTerms', 'legalLicense'] },
 ];

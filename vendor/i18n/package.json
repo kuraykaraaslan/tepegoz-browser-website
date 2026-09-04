@@ -1,0 +1,19 @@
+{
+  "name": "@kuraykaraaslan/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./server/i18n.core": "./server/i18n.core.ts",
+    "./server/messages": "./server/messages.ts",
+    "./ui": "./ui/index.ts",
+    "./ui/index": "./ui/index.ts",
+    "./ui/app-locale": "./ui/app-locale.ts",
+    "./ui/i18n.context.component": "./ui/i18n.context.component.tsx",
+    "./ui/interpolate": "./ui/interpolate.ts",
+    "./ui/resolve-ui-locale": "./ui/resolve-ui-locale.ts",
+    "./ui/types": "./ui/types.ts",
+    "./module.json": "./module.json"
+  },
+  "description": "@kuraykaraaslan/i18n — vendored SOURCE copy of next-boilerplate's modules/i18n. The upstream module is private and unpublished, so it cannot be installed; it is copied here verbatim, exactly as vendor/kui-react carries that package's build output for the same reason. Unlike kui-react this ships .ts/.tsx rather than a built dist, so next.config.ts lists it in `transpilePackages`. Copied 2026-09-04 from //wsl.localhost/Ubuntu/home/kuray/next-boilerplate/modules/i18n (not a git checkout, so there is no upstream commit to record). Do not edit these files: re-copy them, or the next sync silently reverts the change."
+}
