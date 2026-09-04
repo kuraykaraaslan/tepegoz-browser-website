@@ -42,12 +42,33 @@ import { LOCALES, LOCALE_LABELS, isLocale, localePath, type Locale } from '@/lib
  *
  * ## What KUI decides for us
  *
- * The list scales with `LOCALES`: KUI renders a flag and the language's name for
- * each code, so adding a third locale is one entry in the registry and nothing
- * here. Worth knowing before that happens: KUI labels each language through
- * `iso-639-1`'s `getName`, which is the ENGLISH name ("Turkish"), not the
- * endonym ("Türkçe"). `LOCALE_LABELS` still holds the endonyms and the
- * `<noscript>` list uses them; aligning the two means a change in KUI, not here.
+ * The list scales with `LOCALES`: adding a third locale is one entry in the
+ * registry and nothing here. That prediction held when Kyrgyz landed — this file
+ * needed no edit — and the two costs it warned about are now measured rather
+ * than anticipated, so they are recorded as facts:
+ *
+ *   - **The names are English.** KUI labels each language through `iso-639-1`'s
+ *     `getName`, so the dropdown reads "English", "Turkish", "Kyrgyz" — never
+ *     "Türkçe" or "Кыргызча". This is worst for Kyrgyz: a reader who came for a
+ *     Cyrillic site is offered their own language under a Latin exonym.
+ *   - **Kyrgyz gets no flag at all.** `getFlag` consults a hardcoded
+ *     `langToCountry` map holding `en, tr, de, fr, ar`, then falls back to a
+ *     `LANG_FLAGS` table built from KUI's OWN available-languages list, which is
+ *     `['en']` here. `ky` is in neither, so the icon slot renders `undefined`
+ *     and the row sits flagless beside two that are not.
+ *
+ * The near miss is worth writing down, because the obvious "fix" is to extend
+ * that map and it is a trap: the emoji fallback is `lang.toUpperCase()`, and for
+ * Kyrgyz that is `KY` — the Cayman Islands. The language code and the country
+ * code disagree (Kyrgyzstan is `KG`), so a fallback that happened to fire would
+ * have printed a Caribbean flag next to Кыргызча with no error anywhere. It does
+ * not fire only because the lookup table is empty.
+ *
+ * Both belong to KUI, and `vendor/kui-react/dist` is a build artifact that
+ * `npm run kui:sync` replaces wholesale — patching it here would be overwritten
+ * by the next sync and is not the fix. `LOCALE_LABELS` still holds the endonyms
+ * and the `<noscript>` list below uses them, which is why that list is the only
+ * place on the site where a Kyrgyz reader currently sees "Кыргызча".
  */
 export function LocaleSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname();

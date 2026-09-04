@@ -21,8 +21,13 @@
  * and is worth remembering for the next locale: ship the shell, say plainly that
  * the body is not translated, and let the copy land afterwards. That is how a
  * second language avoids staying permanently "next quarter".
+ *
+ * Kyrgyz (`ky`) is the third, and it carries a caveat the other two do not — see
+ * `modules/marketing/content/ky/index.ts`. The copy is complete and every gate
+ * passes, but no Kyrgyz speaker has read it. That is recorded there rather than
+ * here because it is a fact about the *copy*, not about the routing.
  */
-export const LOCALES = ['en', 'tr'] as const;
+export const LOCALES = ['en', 'tr', 'ky'] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -34,6 +39,11 @@ export const LOCALE_LABELS: Record<Locale, { label: string; nativeName: string }
   // Endonym, deliberately: a language picker that says "Turkish" is written for
   // someone who already reads English.
   tr: { label: 'TR', nativeName: 'Türkçe' },
+  // Same rule, and the reason it is worth restating: the endonym is Cyrillic, so
+  // this is the first entry whose `nativeName` a Latin-only reader cannot even
+  // approximate. The `label` stays Latin because it is a two-letter code shown
+  // beside a flag, not a word.
+  ky: { label: 'KY', nativeName: 'Кыргызча' },
 };
 
 export function isLocale(value: string): value is Locale {

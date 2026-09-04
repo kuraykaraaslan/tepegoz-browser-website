@@ -16,6 +16,7 @@ import type {
 } from '@/types/content';
 import { EN_PAGES, EN_NAV_LABELS } from './en';
 import { TR_PAGES, TR_NAV_LABELS } from './tr';
+import { KY_PAGES, KY_NAV_LABELS } from './ky';
 
 /**
  * Content registry.
@@ -32,20 +33,27 @@ import { TR_PAGES, TR_NAV_LABELS } from './tr';
 /**
  * Page bodies per locale.
  *
- * `content/tr/` has landed, so `tr` points at the Turkish pages: every route
- * carries a translated body, not just a translated shell. The half-measure this
- * comment used to describe — a Turkish header and footer wrapped around English
- * copy — is gone, and `isUntranslated` below now returns false for every locale.
+ * `content/tr/` and `content/ky/` have both landed, so every locale points at its
+ * own pages: each route carries a translated body, not just a translated shell.
+ * The half-measure this comment used to describe — a Turkish header and footer
+ * wrapped around English copy — is gone, and `isUntranslated` below now returns
+ * false for every locale.
  *
  * That function is deliberately kept rather than deleted. It is the mechanism, not
  * a note about a past state: it is what lets a *future* locale ship its chrome
  * first, and the banner it drives is the only thing that would tell a reader the
  * body under it is not in their language. Deleting it would mean the next locale
  * either waits for a full translation or falls back in silence.
+ *
+ * One thing this map cannot express, and it matters more than anything it can:
+ * `ky` is complete but **has never been read by a Kyrgyz speaker**. "Translated"
+ * and "reviewed" are different states, and only the first of them is a fact about
+ * this file. See `./ky/index.ts`, where that is written down at length.
  */
 const REGISTRY: Record<Locale, { pages: Record<RouteKey, PageContent>; nav: NavLabels }> = {
   en: { pages: EN_PAGES, nav: EN_NAV_LABELS },
   tr: { pages: TR_PAGES, nav: TR_NAV_LABELS },
+  ky: { pages: KY_PAGES, nav: KY_NAV_LABELS },
 };
 
 /** True while a locale is still served from another locale's copy. */
