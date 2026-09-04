@@ -1,3 +1,5 @@
+import '../../globals.css';
+import { siteMetadata, siteViewport } from '@/libs/seo/document';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
@@ -46,8 +48,11 @@ export function generateStaticParams(): { lang: string }[] {
 /**
  * The prefixed-locale shell.
  *
- * A sibling ROOT layout to `app/(frontend)/layout.tsx` — route groups may each
- * own one, so the two trees never nest and there is never a second `<html>`.
+ * A sibling ROOT layout to `app/(frontend)/layout.tsx`, and genuinely one: there
+ * is no `app/layout.tsx` above them. That matters beyond tidiness — while a
+ * pass-through parent existed, Next did not consider an EN/TR move a
+ * root-layout crossing and navigated client-side, which let React re-acquire
+ * `<html>` and strip the pre-paint theme class off it.
  * This one reads the locale from the segment instead of hardcoding the default.
  */
 export default async function LocalizedLayout({
@@ -117,3 +122,8 @@ export default async function LocalizedLayout({
     </html>
   );
 }
+
+/* Site-wide <head> facts, defined once in libs/seo/document.ts and re-exported
+   by BOTH root layouts. Copying them would let the two trees drift. */
+export const metadata = siteMetadata;
+export const viewport = siteViewport;

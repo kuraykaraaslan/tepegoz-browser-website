@@ -9,24 +9,29 @@ import { LOCALES, LOCALE_LABELS, isLocale, localePath, type Locale } from '@/lib
  *
  * ## Why the navigation is a FULL document load
  *
- * This is the fix for a real bug: switching language reset the theme to light.
+ * This was the fix for a real bug — switching language reset the theme to light
+ * — and the explanation written here first was wrong in a way worth recording,
+ * because the wrong version still produced a working fix and would have been
+ * believed.
  *
- * The locales live in different ROOT layouts — `app/(frontend)` serves the
- * default locale unprefixed, `app/(localized)/[lang]` serves the rest — and each
- * owns its own `<html>`. The `dark` class is not rendered by React; it is put on
- * `<html>` by the inline bootstrap in `<head>`, before first paint, because that
- * is the only way to avoid a flash of the wrong theme. When a `next/link`
- * carried the visitor across that boundary, React re-rendered `<html>` and the
- * imperatively-added class went with it — measured, not assumed: the class
- * attribute came back EMPTY, so the run also lost `h-full` and both font
- * variables, while `localStorage.theme` still said `dark`.
+ * The locales live in two layouts that each render their own `<html>`. The
+ * `dark` class is not one of React's props: the inline bootstrap in `<head>`
+ * puts it on `<html>` before first paint, because that is the only way to avoid
+ * a flash of the wrong theme. React treats `<html>` as a DOM *singleton* — when
+ * it acquires one it strips every attribute off the live element and re-applies
+ * only the props it owns. `className` is one of those props, so the font classes
+ * and `h-full` come back; `dark` is not, so it does not.
  *
- * `location.assign` makes it a document navigation. The bootstrap runs again, the
- * stored preference is re-applied before paint, and the target root layout gets a
- * clean document instead of one React is trying to reconcile against a tree it
- * never rendered. A language switch is a new document by every other measure too
- * — different `lang`, different root layout — so this is not a workaround bolted
- * onto a soft navigation; it is the honest shape of the thing.
+ * What made that happen at all was `app/layout.tsx`, a pass-through that
+ * rendered no `<html>`. A layout is a ROOT layout only when nothing sits above
+ * it, so with that file present Next stamped the root-layout flag on the segment
+ * both trees share, decided a locale switch was not crossing root layouts, and
+ * took the client-side path. That file is gone now, the two layouts really are
+ * root layouts, and Next performs the document load itself — for every link that
+ * crosses, not only this control.
+ *
+ * `location.assign` stays because KUI's switcher is a dropdown, not a link:
+ * something has to navigate. It is now belt-and-braces rather than the fix.
  *
  * ## Why `<noscript>` still carries real links
  *

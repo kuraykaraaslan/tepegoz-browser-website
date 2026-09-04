@@ -1,3 +1,5 @@
+import '../globals.css';
+import { siteMetadata, siteViewport } from '@/libs/seo/document';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SiteHeader } from '@/components/layout/SiteHeader';
 import { SiteFooter } from '@/components/layout/SiteFooter';
@@ -81,3 +83,8 @@ export default function DefaultLocaleLayout({ children }: { children: React.Reac
     </html>
   );
 }
+
+/* Site-wide <head> facts, defined once in libs/seo/document.ts and re-exported
+   by BOTH root layouts. Copying them would let the two trees drift. */
+export const metadata = siteMetadata;
+export const viewport = siteViewport;
