@@ -10,16 +10,17 @@
  * navigation, the sitemap, `hreflang` and the language switcher all follow it
  * without repeating the branch.
  *
- * Turkish is now open. Steps 1 and 3 of the note that used to sit here are done
- * — `'tr'` is in LOCALES and `app/(localized)/[lang]/` mirrors the root pages —
- * and step 2 is deliberately NOT: there is no `content/tr/` yet, so `getPage`
- * falls back to the English page body per route. The site chrome IS translated,
- * through `modules/marketing/dictionaries`, so `/tr/…` is a working Turkish
- * shell around English copy rather than a dead link.
+ * Turkish is complete. All three steps of the note that used to sit here are
+ * done: `'tr'` is in LOCALES, `app/(localized)/[lang]/` mirrors the root pages,
+ * and `modules/marketing/content/tr/` now carries a translated body for every
+ * route. The chrome was already translated through
+ * `modules/marketing/dictionaries`; `/tr/…` is now Turkish all the way down
+ * rather than a Turkish shell around English copy.
  *
- * That is a visible half-measure on purpose. The alternative was to hold the
- * whole locale back until 3,000 lines of copy were translated, which is how a
- * second language stays permanently "next quarter".
+ * The half-measure this comment used to describe was the right call at the time
+ * and is worth remembering for the next locale: ship the shell, say plainly that
+ * the body is not translated, and let the copy land afterwards. That is how a
+ * second language avoids staying permanently "next quarter".
  */
 export const LOCALES = ['en', 'tr'] as const;
 

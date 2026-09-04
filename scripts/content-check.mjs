@@ -21,12 +21,32 @@
  *   npm run content:check
  */
 
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const contentDir = join(root, 'modules', 'marketing', 'content', 'en');
+const contentRoot = join(root, 'modules', 'marketing', 'content');
+
+/**
+ * Every locale directory under `content/`, discovered rather than listed.
+ *
+ * This used to check `content/en/` alone, which was true of the repository at
+ * the time and stopped being true the moment `content/tr/` landed: half the
+ * site's rendered copy was suddenly outside every rule this file enforces. A
+ * translated meta description is longer than its English source often enough
+ * that the 155-character limit is a real constraint rather than a formality —
+ * five of the first twenty Turkish pages were over it — and a `draft-legal`
+ * page whose `{{PLACEHOLDER}}` tokens got translated into Turkish would read as
+ * finished writing to exactly the reader least able to tell.
+ *
+ * Discovered, not enumerated, because a hardcoded `['en', 'tr']` is a third
+ * place a new locale has to be registered and the one nobody would remember —
+ * and its failure is silent, which is the kind this script exists to prevent.
+ */
+const locales = readdirSync(contentRoot).filter((entry) =>
+  statSync(join(contentRoot, entry)).isDirectory()
+);
 
 const MAX_DESCRIPTION = 155;
 
@@ -64,16 +84,31 @@ function galleryCounts(source) {
 
 const problems = [];
 
-for (const file of readdirSync(contentDir)) {
-  // A `*.generated.ts` module is data, not a page: it has no meta description
-  // to measure, no status to reconcile and no links to resolve, so every check
-  // below would either misfire on it or measure nothing. Its editorial-marker
-  // discipline is enforced harder and earlier anyway — the generator refuses to
-  // emit a row carrying a marker at all, rather than stripping one and leaving a
-  // hole that reads as finished writing.
-  if (!file.endsWith('.ts') || file === 'index.ts' || file.endsWith('.generated.ts')) continue;
-  const source = readFileSync(join(contentDir, file), 'utf8');
-  const where = `modules/marketing/content/en/${file}`;
+/*
+ * Every page module in every locale, as `<locale>/<file>` paths.
+ *
+ * Flattened into one list rather than nested loops so the body below — which is
+ * the part anyone reads — stays at the indentation it was written at, and so a
+ * new check cannot be added inside the wrong loop.
+ *
+ * A `*.generated.ts` module is data, not a page: it has no meta description to
+ * measure, no status to reconcile and no links to resolve, so every check below
+ * would either misfire on it or measure nothing. Its editorial-marker discipline
+ * is enforced harder and earlier anyway — the generator refuses to emit a row
+ * carrying a marker at all, rather than stripping one and leaving a hole that
+ * reads as finished writing.
+ */
+const pages = locales.flatMap((locale) =>
+  readdirSync(join(contentRoot, locale))
+    .filter(
+      (file) => file.endsWith('.ts') && file !== 'index.ts' && !file.endsWith('.generated.ts')
+    )
+    .map((file) => `${locale}/${file}`)
+);
+
+for (const page of pages) {
+  const source = readFileSync(join(contentRoot, page), 'utf8');
+  const where = `modules/marketing/content/${page}`;
 
   // 1. Meta description length.
   const description = /description:\s*\n?\s*'((?:[^'\\]|\\.)*)'/.exec(source);

@@ -15,6 +15,7 @@ import type {
   Section,
 } from '@/types/content';
 import { EN_PAGES, EN_NAV_LABELS } from './en';
+import { TR_PAGES, TR_NAV_LABELS } from './tr';
 
 /**
  * Content registry.
@@ -31,21 +32,20 @@ import { EN_PAGES, EN_NAV_LABELS } from './en';
 /**
  * Page bodies per locale.
  *
- * `tr` deliberately points at the ENGLISH pages. There is no `content/tr/` yet,
- * and this is the one place that fact is expressed — so a Turkish visitor gets a
- * translated shell (header, footer, controls, language switcher, metadata) around
- * an English body, rather than a 404 or a blank page.
+ * `content/tr/` has landed, so `tr` points at the Turkish pages: every route
+ * carries a translated body, not just a translated shell. The half-measure this
+ * comment used to describe — a Turkish header and footer wrapped around English
+ * copy — is gone, and `isUntranslated` below now returns false for every locale.
  *
- * It is a visible half-measure, chosen over holding the whole locale back until
- * 3,000 lines of copy are translated. `withLocale` still rewrites every internal
- * link through `localePath`, so navigation stays inside `/tr/…` instead of
- * quietly dumping the reader back into the English site on their first click.
- *
- * When `content/tr/` lands, this map is the only line that changes.
+ * That function is deliberately kept rather than deleted. It is the mechanism, not
+ * a note about a past state: it is what lets a *future* locale ship its chrome
+ * first, and the banner it drives is the only thing that would tell a reader the
+ * body under it is not in their language. Deleting it would mean the next locale
+ * either waits for a full translation or falls back in silence.
  */
 const REGISTRY: Record<Locale, { pages: Record<RouteKey, PageContent>; nav: NavLabels }> = {
   en: { pages: EN_PAGES, nav: EN_NAV_LABELS },
-  tr: { pages: EN_PAGES, nav: EN_NAV_LABELS },
+  tr: { pages: TR_PAGES, nav: TR_NAV_LABELS },
 };
 
 /** True while a locale is still served from another locale's copy. */

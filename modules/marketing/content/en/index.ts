@@ -27,7 +27,10 @@ import { legalLicense } from './legal-license';
  *
  * `docs/website/README.md`: "English is the source. Turkish is a first-class
  * translation, not an afterthought — but it is translated *from* these files."
- * A `modules/marketing/content/tr/` folder mirrors this one exactly, key for key.
+ * `modules/marketing/content/tr/` now exists and mirrors this folder exactly, key
+ * for key: a page added here needs its Turkish counterpart in the same change, or
+ * `TR_PAGES` stops satisfying `Record<RouteKey, PageContent>` and the build fails.
+ * That is the intended enforcement — the mirror is a type, not a convention.
  */
 export const EN_PAGES: Record<RouteKey, PageContent> = {
   home,
