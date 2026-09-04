@@ -95,6 +95,32 @@ for (const k of keys) sorted[k] = found[k];
 const body = `${JSON.stringify(sorted, null, 2)}\n`;
 
 if (CHECK) {
+  /*
+   * Orphans are drift in the direction nobody notices.
+   *
+   * A key that leaves the code stays behind in every translated dictionary,
+   * where it reads exactly like a live string: a reviewer sees a translated
+   * sentence and has no way to tell that it renders nowhere. Missing keys are
+   * NOT an error — the runtime falls back per key, which is what lets a locale
+   * ship half-translated — but a translation for a key that no longer exists is
+   * simply stale, and the first one appeared within an hour of the dictionary
+   * existing, when a control was replaced and its label went with it.
+   */
+  const orphans = [];
+  for (const file of readdirSync(dirname(OUT))) {
+    if (!file.endsWith('.json') || file === 'en.json') continue;
+    const dict = JSON.parse(readFileSync(join(dirname(OUT), file), 'utf8'));
+    for (const k of Object.keys(dict)) {
+      if (!(k in sorted)) orphans.push(`${file}: ${k}`);
+    }
+  }
+  if (orphans.length) {
+    console.error('✗ dictionary keys that no t() call renders any more:');
+    for (const o of orphans) console.error(`    ${o}`);
+    console.error('\n  Remove them, or restore the call site that used them.');
+    process.exit(1);
+  }
+
   const current = existsSync(OUT) ? readFileSync(OUT, 'utf8').replace(/\r\n/g, '\n') : '';
   if (current !== body) {
     console.error('✗ modules/marketing/dictionaries/en.json is out of date with the t() calls in the code.');
