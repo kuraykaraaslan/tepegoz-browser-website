@@ -12,7 +12,16 @@ no submodule.
 
 - Upstream: https://github.com/kuraykaraaslan/kui-react
 - Vendored version: `1.0.1`
-- Vendored on: 2026-08-23
+- Vendored on: 2026-09-05 (carries the language→region fix; see below)
+
+### Why this bundle is ahead of the last tagged 1.0.1
+
+Adding Kyrgyz surfaced a defect in KUI's `LanguageSwitcher`: it inferred a
+country from a language by uppercasing the code, so `ky` became `KY` — the
+Cayman Islands — and Kyrgyzstan is `KG`. It is fixed upstream (an explicit
+language→region map, `null` for unknown languages instead of a guess) and this
+bundle is the rebuild that carries it. The version number did not move, so
+re-syncing from an older checkout would silently undo it.
 
 ## Refreshing to a newer KUI build
 

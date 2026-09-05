@@ -175,8 +175,79 @@ var LANG_NAMES = Object.fromEntries(
     import_iso_639_1.default.getName(lang) || lang
   ])
 );
-function langToCountry(lang) {
-  return lang.length === 2 ? lang.toUpperCase() : "US";
+var LANG_REGION = {
+  af: "ZA",
+  am: "ET",
+  ar: "SA",
+  az: "AZ",
+  be: "BY",
+  bg: "BG",
+  bn: "BD",
+  bs: "BA",
+  ca: "ES",
+  cs: "CZ",
+  da: "DK",
+  de: "DE",
+  el: "GR",
+  en: "US",
+  es: "ES",
+  et: "EE",
+  eu: "ES",
+  fa: "IR",
+  fi: "FI",
+  fr: "FR",
+  ga: "IE",
+  gl: "ES",
+  he: "IL",
+  hi: "IN",
+  hr: "HR",
+  hu: "HU",
+  hy: "AM",
+  id: "ID",
+  is: "IS",
+  it: "IT",
+  ja: "JP",
+  ka: "GE",
+  kk: "KZ",
+  km: "KH",
+  ko: "KR",
+  ky: "KG",
+  lo: "LA",
+  lt: "LT",
+  lv: "LV",
+  mk: "MK",
+  ms: "MY",
+  mt: "MT",
+  my: "MM",
+  nb: "NO",
+  ne: "NP",
+  nl: "NL",
+  nn: "NO",
+  no: "NO",
+  pl: "PL",
+  pt: "PT",
+  ro: "RO",
+  ru: "RU",
+  si: "LK",
+  sk: "SK",
+  sl: "SI",
+  sq: "AL",
+  sr: "RS",
+  sv: "SE",
+  sw: "TZ",
+  ta: "IN",
+  th: "TH",
+  tr: "TR",
+  uk: "UA",
+  ur: "PK",
+  uz: "UZ",
+  vi: "VN",
+  zh: "CN",
+  zu: "ZA"
+};
+function langToRegion(lang) {
+  var _a3;
+  return (_a3 = LANG_REGION[lang]) != null ? _a3 : null;
 }
 function countryCodeToEmoji(code) {
   return code.toUpperCase().replace(
@@ -185,7 +256,8 @@ function countryCodeToEmoji(code) {
   );
 }
 function getLangFlag(lang) {
-  return countryCodeToEmoji(langToCountry(lang));
+  const region = langToRegion(lang);
+  return region === null ? "" : countryCodeToEmoji(region);
 }
 var LANG_FLAGS = Object.fromEntries(
   AVAILABLE_LANGUAGES.map((lang) => [lang, getLangFlag(lang)])
@@ -2331,23 +2403,11 @@ function DropdownMenu({
 
 // modules/domains/common/i18n/LanguageSwitcher.tsx
 var import_jsx_runtime26 = require("react/jsx-runtime");
-var langToCountry2 = {
-  en: "US",
-  // veya 'GB' kullanılabilir
-  tr: "TR",
-  de: "DE",
-  fr: "FR",
-  ar: "SA"
-};
 function getFlag(lang) {
-  const countryCode = langToCountry2[lang];
-  if (countryCode) {
-    const FlagComp = Flags[countryCode];
-    if (FlagComp) {
-      return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(FlagComp, { className: "w-4 h-auto rounded-[2px] shadow-sm" });
-    }
-  }
-  return LANG_FLAGS[lang];
+  const region = langToRegion(lang);
+  if (region === null) return null;
+  const FlagComp = Flags[region];
+  return FlagComp ? /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(FlagComp, { className: "w-4 h-auto rounded-[2px] shadow-sm" }) : null;
 }
 function LanguageSwitcher({
   value,
@@ -2357,16 +2417,26 @@ function LanguageSwitcher({
 }) {
   const [internal, setInternal] = (0, import_react15.useState)(DEFAULT_LANGUAGE);
   const current = value !== void 0 ? value : internal;
-  const items = languages.map((lang) => ({
-    type: "item",
-    label: getLanguageName(lang),
-    icon: getFlag(lang),
-    // DropdownMenu string beklediği için cast ediyoruz
-    onClick: () => {
-      setInternal(lang);
-      onChange == null ? void 0 : onChange(lang);
-    }
-  }));
+  const items = languages.map((lang) => {
+    var _a3;
+    return {
+      type: "item",
+      label: getLanguageName(lang),
+      // No cast. The comment here used to say DropdownMenu expects a string, and it
+      // does not — `DropdownItem.icon` is `React.ReactNode`, which an element and
+      // `undefined` both satisfy. The `as any` was load-bearing for nothing and hid
+      // the fact that this had always type-checked.
+      //
+      // `?? undefined` rather than null so a flagless row renders with no icon slot
+      // at all: `DropdownMenu` guards with `item.icon && …`, which treats both the
+      // same, but `undefined` is what "absent optional prop" means.
+      icon: (_a3 = getFlag(lang)) != null ? _a3 : void 0,
+      onClick: () => {
+        setInternal(lang);
+        onChange == null ? void 0 : onChange(lang);
+      }
+    };
+  });
   return /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
     DropdownMenu,
     {

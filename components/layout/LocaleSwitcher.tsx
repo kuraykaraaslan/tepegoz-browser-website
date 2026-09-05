@@ -44,31 +44,30 @@ import { LOCALES, LOCALE_LABELS, isLocale, localePath, type Locale } from '@/lib
  *
  * The list scales with `LOCALES`: adding a third locale is one entry in the
  * registry and nothing here. That prediction held when Kyrgyz landed — this file
- * needed no edit — and the two costs it warned about are now measured rather
- * than anticipated, so they are recorded as facts:
+ * needed no edit — but the locale did surface a real defect in KUI, now fixed
+ * upstream and carried by the vendored bundle:
  *
- *   - **The names are English.** KUI labels each language through `iso-639-1`'s
- *     `getName`, so the dropdown reads "English", "Turkish", "Kyrgyz" — never
- *     "Türkçe" or "Кыргызча". This is worst for Kyrgyz: a reader who came for a
- *     Cyrillic site is offered their own language under a Latin exonym.
- *   - **Kyrgyz gets no flag at all.** `getFlag` consults a hardcoded
- *     `langToCountry` map holding `en, tr, de, fr, ar`, then falls back to a
- *     `LANG_FLAGS` table built from KUI's OWN available-languages list, which is
- *     `['en']` here. `ky` is in neither, so the icon slot renders `undefined`
- *     and the row sits flagless beside two that are not.
+ *   **KUI inferred a country from a language by uppercasing the code.** That is
+ *   right only where the two happen to coincide (`tr`→`TR`), and for Kyrgyz it
+ *   produced `KY` — the Cayman Islands. Kyrgyzstan is `KG`. The failure was
+ *   silent by construction: `KY` is a real country, so nothing 404s and nothing
+ *   throws; it would simply have put a Caribbean flag beside Кыргызча. KUI now
+ *   keeps an explicit language→region map and returns `null` for languages it
+ *   does not know, so an unmapped language renders with no flag instead of
+ *   somebody else's. `vendor/kui-react/README.md` records why that bundle is
+ *   ahead of its own version number.
  *
- * The near miss is worth writing down, because the obvious "fix" is to extend
- * that map and it is a trap: the emoji fallback is `lang.toUpperCase()`, and for
- * Kyrgyz that is `KY` — the Cayman Islands. The language code and the country
- * code disagree (Kyrgyzstan is `KG`), so a fallback that happened to fire would
- * have printed a Caribbean flag next to Кыргызча with no error anywhere. It does
- * not fire only because the lookup table is empty.
+ * One cost remains and is KUI's to fix: **the names are English.** It labels each
+ * language through `iso-639-1`'s `getName`, so the dropdown reads "English",
+ * "Turkish", "Kyrgyz" — never "Türkçe" or "Кыргызча". That is worst for Kyrgyz,
+ * where a reader who came for a Cyrillic site is offered their own language under
+ * a Latin exonym. `LOCALE_LABELS` holds the endonyms and the `<noscript>` list
+ * below uses them, which is why that list is currently the only place on the site
+ * where a Kyrgyz reader sees "Кыргызча".
  *
- * Both belong to KUI, and `vendor/kui-react/dist` is a build artifact that
- * `npm run kui:sync` replaces wholesale — patching it here would be overwritten
- * by the next sync and is not the fix. `LOCALE_LABELS` still holds the endonyms
- * and the `<noscript>` list below uses them, which is why that list is the only
- * place on the site where a Kyrgyz reader currently sees "Кыргызча".
+ * Do not patch `vendor/kui-react/dist` to fix either one: it is a build artifact
+ * that `npm run kui:sync` replaces wholesale, so the change would survive exactly
+ * until the next sync.
  */
 export function LocaleSwitcher({ locale }: { locale: Locale }) {
   const pathname = usePathname();

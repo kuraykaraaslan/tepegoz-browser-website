@@ -81,7 +81,7 @@ import {
   VisibilityBadge,
   detectBrand,
   useDirection
-} from "./chunk-SVFQZPNZ.mjs";
+} from "./chunk-URQQNAQ2.mjs";
 import "./chunk-C7AYI4XM.mjs";
 import "./chunk-45I3EDB2.mjs";
 import "./chunk-ZLYBRYWQ.mjs";

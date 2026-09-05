@@ -4958,6 +4958,7 @@ __export(ui_exports, {
   Badge: () => Badge,
   BrandLogo: () => BrandLogo,
   Breadcrumb: () => Breadcrumb,
+  BulkActionTable: () => BulkActionTable,
   Button: () => Button,
   ButtonGroup: () => ButtonGroup,
   Card: () => Card,
@@ -5007,6 +5008,7 @@ __export(ui_exports, {
   TagInput: () => TagInput,
   Textarea: () => Textarea,
   TimePicker: () => TimePicker,
+  Timeline: () => Timeline,
   Toast: () => Toast,
   ToastProvider: () => ToastProvider,
   ToastRegion: () => ToastRegion,
@@ -10022,6 +10024,257 @@ var LazyVideoPlayer = (0, import_dynamic.default)(
   () => Promise.resolve().then(() => (init_VideoPlayer(), VideoPlayer_exports)).then((m) => m.VideoPlayer),
   { loading: () => /* @__PURE__ */ (0, import_jsx_runtime82.jsx)(SkeletonCard, {}), ssr: false }
 );
+
+// modules/ui/BulkActionTable.tsx
+var import_react64 = require("react");
+init_cn();
+init_Table();
+var import_jsx_runtime83 = require("react/jsx-runtime");
+var DEFAULT_LABELS = {
+  selectRow: "Select row",
+  selectAllOnPage: "Select all rows on this page",
+  selectedCount: (n) => `${n} selected`,
+  selectAllMatching: (n) => `Select all ${n} matching`,
+  clear: "Clear selection"
+};
+function BulkActionTable({
+  columns,
+  rows,
+  rowId,
+  selected,
+  onSelectedChange,
+  actions = [],
+  totalMatching,
+  onSelectAllMatching,
+  isRowSelectable,
+  caption,
+  emptyMessage,
+  className,
+  labels: labelOverrides
+}) {
+  const labels = __spreadValues(__spreadValues({}, DEFAULT_LABELS), labelOverrides);
+  const selectedSet = (0, import_react64.useMemo)(() => new Set(selected), [selected]);
+  const selectableRows = (0, import_react64.useMemo)(
+    () => rows.filter((row) => isRowSelectable ? isRowSelectable(row) === true : true),
+    [rows, isRowSelectable]
+  );
+  const visibleSelectedCount = selectableRows.filter((r) => selectedSet.has(rowId(r))).length;
+  const allVisibleSelected = selectableRows.length > 0 && visibleSelectedCount === selectableRows.length;
+  const someVisibleSelected = visibleSelectedCount > 0 && !allVisibleSelected;
+  function toggleRow(id) {
+    const next = new Set(selectedSet);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    onSelectedChange([...next]);
+  }
+  function toggleAllVisible() {
+    const next = new Set(selectedSet);
+    if (allVisibleSelected) {
+      for (const row of selectableRows) next.delete(rowId(row));
+    } else {
+      for (const row of selectableRows) next.add(rowId(row));
+    }
+    onSelectedChange([...next]);
+  }
+  const headerCheckbox = /* @__PURE__ */ (0, import_jsx_runtime83.jsx)(
+    "input",
+    {
+      type: "checkbox",
+      className: "h-4 w-4 rounded border-border-strong accent-[var(--primary)]",
+      checked: allVisibleSelected,
+      ref: (el) => {
+        if (el) el.indeterminate = someVisibleSelected;
+      },
+      onChange: toggleAllVisible,
+      "aria-label": labels.selectAllOnPage,
+      disabled: selectableRows.length === 0
+    }
+  );
+  const selectionColumn = {
+    key: "__selection",
+    header: headerCheckbox,
+    thClass: "w-10",
+    tdClass: "w-10",
+    render: (row) => {
+      const id = rowId(row);
+      const selectable = isRowSelectable ? isRowSelectable(row) : true;
+      const reason = selectable === true ? void 0 : selectable;
+      return /* @__PURE__ */ (0, import_jsx_runtime83.jsx)(
+        "input",
+        {
+          type: "checkbox",
+          className: "h-4 w-4 rounded border-border-strong accent-[var(--primary)] disabled:opacity-40",
+          checked: selectedSet.has(id),
+          disabled: reason !== void 0,
+          title: reason,
+          onChange: () => toggleRow(id),
+          "aria-label": `${labels.selectRow} ${String(id)}`
+        }
+      );
+    }
+  };
+  const columnsWithSelection = [selectionColumn, ...columns];
+  const hasMoreMatching = typeof totalMatching === "number" && totalMatching > rows.length && onSelectAllMatching;
+  return /* @__PURE__ */ (0, import_jsx_runtime83.jsxs)("div", { className: cn("flex flex-col gap-3", className), children: [
+    selected.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime83.jsxs)(
+      "div",
+      {
+        role: "region",
+        "aria-label": "Bulk actions",
+        className: cn(
+          "flex flex-wrap items-center gap-3 rounded-lg border border-border",
+          "bg-surface-overlay px-3 py-2"
+        ),
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime83.jsx)("span", { className: "text-sm font-medium text-text-primary", children: labels.selectedCount(selected.length) }),
+          hasMoreMatching && /* @__PURE__ */ (0, import_jsx_runtime83.jsx)(
+            "button",
+            {
+              type: "button",
+              onClick: onSelectAllMatching,
+              className: "text-sm text-primary hover:underline",
+              children: labels.selectAllMatching(totalMatching)
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime83.jsxs)("div", { className: "ml-auto flex flex-wrap items-center gap-2", children: [
+            actions.map((action) => {
+              var _a;
+              const disabledReason = (_a = action.disabled) == null ? void 0 : _a.call(action, [...selected]);
+              return /* @__PURE__ */ (0, import_jsx_runtime83.jsxs)(
+                "button",
+                {
+                  type: "button",
+                  disabled: Boolean(disabledReason),
+                  title: disabledReason || void 0,
+                  onClick: () => action.onAction([...selected]),
+                  className: cn(
+                    "inline-flex items-center gap-2 rounded-md px-3 py-1.5 text-sm",
+                    "transition-colors motion-reduce:transition-none",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-focus",
+                    "disabled:cursor-not-allowed disabled:opacity-50",
+                    action.destructive ? "bg-error text-white hover:opacity-90" : "bg-primary text-primary-fg hover:bg-primary-hover"
+                  ),
+                  children: [
+                    action.icon,
+                    action.label
+                  ]
+                },
+                action.key
+              );
+            }),
+            /* @__PURE__ */ (0, import_jsx_runtime83.jsx)(
+              "button",
+              {
+                type: "button",
+                onClick: () => onSelectedChange([]),
+                className: "text-sm text-text-secondary hover:text-text-primary",
+                children: labels.clear
+              }
+            )
+          ] })
+        ]
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime83.jsx)(
+      Table,
+      {
+        columns: columnsWithSelection,
+        rows,
+        caption,
+        emptyMessage
+      }
+    )
+  ] });
+}
+
+// modules/ui/Timeline.tsx
+var import_react65 = require("react");
+init_cn();
+var import_jsx_runtime84 = require("react/jsx-runtime");
+var TONE_CLASS = {
+  default: "bg-surface-sunken text-text-secondary",
+  success: "bg-success-subtle text-success-fg",
+  warning: "bg-warning-subtle text-warning-fg",
+  error: "bg-error-subtle text-error-fg",
+  info: "bg-info-subtle text-info-fg"
+};
+function toDate(value) {
+  return value instanceof Date ? value : new Date(value);
+}
+function Timeline({
+  items,
+  timeZone,
+  locale,
+  groupByDay = true,
+  emptyMessage = "Nothing here yet.",
+  className
+}) {
+  if (items.length === 0) {
+    return /* @__PURE__ */ (0, import_jsx_runtime84.jsx)("p", { className: cn("py-8 text-center text-sm text-text-secondary", className), children: emptyMessage });
+  }
+  const dayFormat = new Intl.DateTimeFormat(locale, {
+    timeZone,
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+  const timeFormat = new Intl.DateTimeFormat(locale, {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    // `hourCycle` rather than `hour12: false`: the latter renders midnight as
+    // hour "24" on some ICU builds.
+    hourCycle: "h23"
+  });
+  const sorted = [...items].sort((a, b) => toDate(b.at).getTime() - toDate(a.at).getTime()).map((item) => ({ item, at: toDate(item.at) }));
+  const rendered = sorted.map((entry, index) => {
+    const day = dayFormat.format(entry.at);
+    const previousDay = index === 0 ? null : dayFormat.format(sorted[index - 1].at);
+    return __spreadProps(__spreadValues({}, entry), { day, showDay: groupByDay && day !== previousDay });
+  });
+  return /* @__PURE__ */ (0, import_jsx_runtime84.jsx)("ol", { className: cn("flex flex-col", className), children: rendered.map(({ item, at, day, showDay }) => {
+    var _a;
+    return /* @__PURE__ */ (0, import_jsx_runtime84.jsxs)(import_react65.Fragment, { children: [
+      showDay && /* @__PURE__ */ (0, import_jsx_runtime84.jsx)("li", { className: "sticky top-0 z-10 bg-surface-base/95 py-2 text-xs font-medium uppercase tracking-wide text-text-secondary backdrop-blur", children: day }),
+      /* @__PURE__ */ (0, import_jsx_runtime84.jsxs)("li", { className: "relative flex gap-3 pb-5 pl-1", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime84.jsx)(
+          "span",
+          {
+            "aria-hidden": "true",
+            className: "absolute left-[1.0625rem] top-8 bottom-0 w-px bg-border last:hidden"
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime84.jsx)(
+          "span",
+          {
+            "aria-hidden": "true",
+            className: cn(
+              "relative z-[1] flex h-[2.125rem] w-[2.125rem] shrink-0 items-center justify-center rounded-full",
+              TONE_CLASS[(_a = item.tone) != null ? _a : "default"]
+            ),
+            children: item.icon
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime84.jsxs)("div", { className: "min-w-0 flex-1 pt-1.5", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime84.jsxs)("div", { className: "flex flex-wrap items-baseline gap-x-2 gap-y-1", children: [
+            /* @__PURE__ */ (0, import_jsx_runtime84.jsx)("span", { className: "text-sm text-text-primary", children: item.title }),
+            /* @__PURE__ */ (0, import_jsx_runtime84.jsx)(
+              "time",
+              {
+                dateTime: at.toISOString(),
+                className: "text-xs text-text-secondary tabular-nums",
+                children: timeFormat.format(at)
+              }
+            ),
+            item.meta && /* @__PURE__ */ (0, import_jsx_runtime84.jsx)("span", { className: "ml-auto", children: item.meta })
+          ] }),
+          item.body && /* @__PURE__ */ (0, import_jsx_runtime84.jsx)("div", { className: "mt-1 text-sm text-text-secondary", children: item.body })
+        ] })
+      ] })
+    ] }, item.id);
+  }) });
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   AdvancedDataTable,
@@ -10032,6 +10285,7 @@ var LazyVideoPlayer = (0, import_dynamic.default)(
   Badge,
   BrandLogo,
   Breadcrumb,
+  BulkActionTable,
   Button,
   ButtonGroup,
   Card,
@@ -10081,6 +10335,7 @@ var LazyVideoPlayer = (0, import_dynamic.default)(
   TagInput,
   Textarea,
   TimePicker,
+  Timeline,
   Toast,
   ToastProvider,
   ToastRegion,

@@ -249,7 +249,15 @@ type FilterState = Record<string, string>;
  */
 type Column<T> = {
     key: keyof T | string;
-    header: string;
+    /**
+     * Column heading.
+     *
+     * Widened from `string` to `ReactNode` so a header can carry a control —
+     * a select-all checkbox, a help tooltip — without the consumer overlaying
+     * one absolutely and hoping the alignment holds. Every existing `string`
+     * header keeps working unchanged.
+     */
+    header: ReactNode;
     render?: (row: T) => ReactNode;
     align?: 'left' | 'center' | 'right';
     sortable?: boolean;
@@ -934,4 +942,112 @@ declare const LazyDateRangePicker: ComponentType<any>;
 declare const LazyMapView: ComponentType<any>;
 declare const LazyVideoPlayer: ComponentType<any>;
 
-export { AdvancedDataTable, type AlertAction, AlertBanner, type AudioTrackOption, Avatar, AvatarGroup, Badge, BrandLogo, Button, ButtonGroup, type ButtonGroupItem, Card, Checkbox, CheckboxGroup, ComboBox, ContentScoreBar, DataTable, DatePicker, DateRangePicker, Drawer, EmptyState, FileInput, Input, LazyAdvancedDataTable, LazyDataTable, LazyDateRangePicker, LazyMapView, LazyServerDataTable, LazyVideoPlayer, type MapMarker, type MapRoute, type MapTooltipData, type MapTooltipField, type MapVariant, MapView, type MapZone, Modal, PageHeader, type PageHeaderAction, Pagination, Popover, type QualityOption, RadioGroup, type RadioOption, type ScoreRule, SearchBar, ServerDataTable, SkeletonAvatar, SkeletonCard, SkeletonLine, SkeletonTableRow, SkeletonText, Slider, Spinner, StarRating, StatCard, type StepItem, Stepper, type SubtitleTrack, type Tab, TabButton, TabGroup, Table, type TableColumn, TagInput, Textarea, TimePicker, ToastItem, Toggle, type TreeNode, TreeView, VideoPlayer, type ViewOrientation, ViewToggle, getEffectiveDuration, useToastStore };
+/**
+ * A table with row selection and a bulk-action bar.
+ *
+ * `DataTable` accepts a `selectable` prop, but it is only read inside the
+ * deprecated `LegacyAdvancedView` and keys selection **by array index** — which
+ * silently selects the wrong rows the moment anything sorts, filters or
+ * paginates. This component is the id-keyed replacement; `Table/`'s own
+ * `TODO M4` remains for whoever retrofits the full DataTable.
+ *
+ * ## Selection is by id, and "select all" is honest
+ *
+ * The header checkbox selects the rows currently rendered, and the bar says so.
+ * "Select all 40 on this page" and "select all 1,240 matching" are different
+ * operations, and conflating them is how a bulk enrich spends credits on twelve
+ * hundred companies nobody chose. When more rows match than are shown, the bar
+ * offers the wider selection explicitly rather than assuming it.
+ */
+type BulkAction<Id> = {
+    /** Stable key, used for React and for telemetry. */
+    key: string;
+    label: string;
+    icon?: ReactNode;
+    /** Rendered in a way that reads as destructive. */
+    destructive?: boolean;
+    onAction: (ids: Id[]) => void;
+    /** Disable for the current selection, with a reason for the tooltip. */
+    disabled?: (ids: Id[]) => string | false;
+};
+type BulkActionTableProps<T extends Record<string, unknown>, Id extends string | number> = {
+    columns: Column<T>[];
+    rows: T[];
+    /** Stable identity for a row. Never the array index. */
+    rowId: (row: T) => Id;
+    selected: readonly Id[];
+    onSelectedChange: (ids: Id[]) => void;
+    actions?: BulkAction<Id>[];
+    /**
+     * Total rows matching the current filter, when more exist than are rendered.
+     * Supplying it turns on the "select all N matching" affordance.
+     */
+    totalMatching?: number;
+    /** Called when the user asks for every matching row, not just this page. */
+    onSelectAllMatching?: () => void;
+    /** Rows that cannot be selected, with the reason shown on the checkbox. */
+    isRowSelectable?: (row: T) => string | true;
+    caption?: string;
+    emptyMessage?: string;
+    className?: string;
+    labels?: Partial<typeof DEFAULT_LABELS>;
+};
+declare const DEFAULT_LABELS: {
+    selectRow: string;
+    selectAllOnPage: string;
+    selectedCount: (n: number) => string;
+    selectAllMatching: (n: number) => string;
+    clear: string;
+};
+declare function BulkActionTable<T extends Record<string, unknown>, Id extends string | number>({ columns, rows, rowId, selected, onSelectedChange, actions, totalMatching, onSelectAllMatching, isRowSelectable, caption, emptyMessage, className, labels: labelOverrides, }: BulkActionTableProps<T, Id>): react_jsx_runtime.JSX.Element;
+
+/**
+ * A chronological activity feed.
+ *
+ * There was no timeline at the `ui` or `app` layer. The only timeline-shaped
+ * code lived in unexported domain verticals (`domains/food/order`,
+ * `domains/iot/alert`, `domains/nft/activity`, `domains/travel/itinerary`),
+ * none of which is reachable from the published package — four
+ * implementations, zero available to a consumer.
+ *
+ * ## Grouping is by the viewer's local day
+ *
+ * An event at 23:50 UTC belongs to a different day depending on who is looking.
+ * Grouping on the raw ISO date puts it under the wrong heading for anyone east
+ * or west of the server, which reads as "the app lost my note" rather than as a
+ * timezone bug. The grouping key comes from `Intl.DateTimeFormat` in the given
+ * `timeZone` — the viewer's own by default.
+ */
+type TimelineItem = {
+    /** Stable identity. Never the array index. */
+    id: string;
+    /** When it happened. A Date, or anything `new Date()` accepts. */
+    at: Date | string | number;
+    /** Short label — the verb. */
+    title: ReactNode;
+    /** The detail, if there is any worth showing inline. */
+    body?: ReactNode;
+    /** Small leading marker: an icon, an avatar, a coloured dot. */
+    icon?: ReactNode;
+    /** Tone of the marker. */
+    tone?: 'default' | 'success' | 'warning' | 'error' | 'info';
+    /** Rendered at the right of the header row — a status chip, a menu. */
+    meta?: ReactNode;
+};
+type TimelineProps = {
+    items: TimelineItem[];
+    /**
+     * IANA zone used for day grouping and time display.
+     * Defaults to the viewer's own.
+     */
+    timeZone?: string;
+    /** BCP 47 tag for the date and time formatting. */
+    locale?: string;
+    /** Hide the sticky day headings. */
+    groupByDay?: boolean;
+    emptyMessage?: string;
+    className?: string;
+};
+declare function Timeline({ items, timeZone, locale, groupByDay, emptyMessage, className, }: TimelineProps): react_jsx_runtime.JSX.Element;
+
+export { AdvancedDataTable, type AlertAction, AlertBanner, type AudioTrackOption, Avatar, AvatarGroup, Badge, BrandLogo, type BulkAction, BulkActionTable, type BulkActionTableProps, Button, ButtonGroup, type ButtonGroupItem, Card, Checkbox, CheckboxGroup, ComboBox, ContentScoreBar, DataTable, DatePicker, DateRangePicker, Drawer, EmptyState, FileInput, Input, LazyAdvancedDataTable, LazyDataTable, LazyDateRangePicker, LazyMapView, LazyServerDataTable, LazyVideoPlayer, type MapMarker, type MapRoute, type MapTooltipData, type MapTooltipField, type MapVariant, MapView, type MapZone, Modal, PageHeader, type PageHeaderAction, Pagination, Popover, type QualityOption, RadioGroup, type RadioOption, type ScoreRule, SearchBar, ServerDataTable, SkeletonAvatar, SkeletonCard, SkeletonLine, SkeletonTableRow, SkeletonText, Slider, Spinner, StarRating, StatCard, type StepItem, Stepper, type SubtitleTrack, type Tab, TabButton, TabGroup, Table, type TableColumn, TagInput, Textarea, TimePicker, Timeline, type TimelineItem, type TimelineProps, ToastItem, Toggle, type TreeNode, TreeView, VideoPlayer, type ViewOrientation, ViewToggle, getEffectiveDuration, useToastStore };
