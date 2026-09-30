@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import { AppNav } from '@kuraykaraaslan/kui-react/app';
 import { Button } from '@kuraykaraaslan/kui-react/ui';
 import { BrandLockup } from '@/components/brand/BrandLockup';
@@ -51,8 +53,11 @@ export function SiteHeader({ locale, labels }: { locale: Locale; labels: NavLabe
         prefetch={false}
         variant="primary"
         size="sm"
+        aria-label={labels.download}
+        title={labels.download}
+        className="shrink-0 !px-3"
       >
-        {labels.download}
+        <FontAwesomeIcon icon={faDownload} aria-hidden="true" />
       </Button>
     </AppNav>
   );
