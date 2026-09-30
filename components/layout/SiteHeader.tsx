@@ -39,7 +39,7 @@ export function SiteHeader({ locale, labels }: { locale: Locale; labels: NavLabe
       sticky
       logo={<BrandLockup locale={locale} compact />}
       navItems={navItems}
-      className="site-header gap-2 bg-surface-base/85 px-3 backdrop-blur-md sm:gap-3 sm:px-6"
+      className="site-header gap-1 bg-surface-base/85 px-3 backdrop-blur-md sm:gap-3 sm:px-6"
     >
       <LocaleSwitcher locale={locale} />
       <ThemeToggle />
